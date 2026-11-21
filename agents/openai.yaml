@@ -1,0 +1,4 @@
+interface:
+  display_name: "需求澄清与执行计划"
+  short_description: "用关键问题和备选方案澄清需求，产出单人可执行、可并行、可验收的计划"
+  default_prompt: "用 $clarify-to-plan 把我的想法整理成执行计划，帮我选清关键取舍，并写明怎样验收。"
