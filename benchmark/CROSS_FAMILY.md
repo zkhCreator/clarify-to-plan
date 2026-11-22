@@ -17,6 +17,13 @@
 
 先收录全部发生过分歧的原答卷。原 A、B、可用的仲裁 C、新模型主判和可用的新模型重读，任一项判据不同均算分歧。再从全部同判的答卷中随机抽 24 份，三个版本各以 8 份为目标，每组尽量包含 2 份一致未通过的答卷。抽样不放回。各来源混排并重新生成盲号。人工填写每项是否达到判据及可选备注。评完后凭独立保存的对照表还原匹配。由于分歧答卷全收、同判答卷抽样，盲审包内的占比只描述该包。
 
+要给另一位评审者制作独立盲号，在仓库外建立两个独立目录。评审者只需收到第一个目录，打开其中的 `index.html`，随时可导出 JSON 进度或导入上次的文件。第二条命令由保管对照表的人在收到人工导出后运行。三项尚未填齐的答卷标为待完成。
+
+~~~sh
+python3 benchmark/human_review.py benchmark/results/cross-family-2026-11-22/votes.jsonl ../reviewer-copy ../review-mapping
+python3 benchmark/human_review.py reconcile /path/to/human-review-answers.json ../review-mapping
+~~~
+
 ## 复算与重跑
 
 从完整克隆的仓库根目录运行。前两条命令只使用 Python 标准库，复核映射、用量记录中的输入指纹及报告统计。最后一条命令用于在具备 Apple Silicon、MLX 和本地模型权重的环境中重新推理。实测依赖版本见运行清单。[环境清单](results/cross-family-2026-11-22/run.json)
