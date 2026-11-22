@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "reporter_sha256": "3998b5961ff90e545e0d6b7fe13e9f74e64c475d0ac6489b879b5a96209725ff",
+  "source_sha256": {
+    "cases.json": "8e93f80c4560ae37c3e9d514167d6f756a489d6c6b0be6d51b3dedfe3122f5ed",
+    "anchors.json": "518c8be79ed3b6f4b6aca4c2d1bb6cfd58c5317ee9c135d6989e87186712a1ce",
+    "subjects.jsonl": "e91999f280258f876ae12078d5463b1d955604843a9a6851eab5f523048d86aa",
+    "ratings.jsonl": "2c32b3226bc64d2bdda2cb9edf93c898e0d058da6dc251629f90ed72b4ce7025"
+  },
+  "run_info": {
+    "model": "Qwen/Qwen3-8B-MLX-4bit",
+    "sha256": "f9f42ce53a4a2b8ef71be270a55fba358962e88695750a008b9720d266c32cc1"
+  },
+  "artifacts_sha256": {
+    "votes.jsonl": "c44f8a5d0a5c0804a7dbde90c45c566a41f151b8cd5e2dd767f81c703a04b67f",
+    "summary.json": "28fbb69bc266d7efc3d3d51dab3b06d93b70ac81c5271adeea39d3b8b26bb4ea",
+    "flips.csv": "6e7699cf180500a79053ebf5b4b39a652a00c1a7e303618f8e5b2855cd8c879b",
+    "report.md": "62237b959987c5f528f6bc5e5f03bf30685a1599eb5dc50540f8a80a387f0d05"
+  }
+}
