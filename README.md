@@ -22,3 +22,7 @@ git clone --branch v1.0.0 https://github.com/zkhCreator/clarify-to-plan.git .age
 ## 版本
 
 每个发布版本用一个带注释的 Git 标签固定到对应提交，并有独立的 GitHub Release。修改记录注明修改原因、原始会话轮次和复核办法。[版本历史](CHANGELOG.md) · [全部 Releases](https://github.com/zkhCreator/clarify-to-plan/releases)
+
+## 基准测试
+
+2026-11-22 的 Codex 对照用同一组 24 道题比较无 skill、v1.0.0 和当时的 main，每题各跑三次。报告提供逐题判定、翻转、盲评一致性、原生用量和实际等待时间。[实测报告](benchmark/results/codex-2026-11-22/report.md) · [补充复核](benchmark/results/codex-2026-11-22/review.md) · [运行与复算](benchmark/README.md) · [本轮固定版本](https://github.com/zkhCreator/clarify-to-plan/releases/tag/benchmark-2026-11-22)

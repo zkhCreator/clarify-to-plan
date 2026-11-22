@@ -2,6 +2,14 @@
 
 这套回归题比较无 skill、发布标签 v1.0.0 和本轮开始时的 main。冻结的提交、模型、推理档位、重复次数及裁判指令见 [protocol.json](protocol.json)。[24 道题](cases.json) 分属澄清、单人交接、等价做法、证据范围、试行门槛和任务承接六个题族。题目公开后可用于回归，后续泛化测试需另留新题。
 
+首轮包含 216 份模型答卷。[2026-11-22 实测](results/codex-2026-11-22/report.md) · [模拟用户复核与结果解读](results/codex-2026-11-22/review.md)
+
+从完整 Git 克隆的仓库根目录可以离线复算首轮结果。
+
+~~~sh
+python3 benchmark/report.py --verify benchmark/results/codex-2026-11-22
+~~~
+
 ## 实验口径
 
 - 每个“题目 × 重复 × 版本”独立开一个临时 Codex 对话。按题目与重复组成配对区组，区组及组内版本顺序使用固定随机种子打乱。重复编号用来配对，模型本身仍可产生不同答复。
@@ -13,10 +21,25 @@
 
 ## 运行
 
-需要 Python 3.9+、Git，以及已登录并支持目标模型和所用 app-server 协议的 Codex。运行目录由使用者选择，内含可续跑的逐次尝试。建议将运行目录设在仓库之外。
+需要 macOS 或 Linux、Python 3.9+、Git，以及已登录并支持目标模型和所用 app-server 协议的 Codex。运行目录由使用者选择，内含可续跑的逐次尝试。建议将运行目录设在仓库之外。
 
 ~~~sh
 python3 benchmark/run.py /tmp/clarify-benchmark --codex /path/to/codex
+python3 benchmark/grade.py /tmp/clarify-benchmark --codex /path/to/codex
+python3 benchmark/report.py /tmp/clarify-benchmark /tmp/clarify-benchmark-report
+python3 benchmark/report.py --verify /tmp/clarify-benchmark-report
+python3 -m unittest discover -s benchmark
 ~~~
 
 运行前检查实际模型和技能禁用状态。每个技术失败最多额外尝试一次，保留原始失败。语义错误不触发重试。已完成的样本在续跑时直接读取。不同的模型、题集、指令、实验代码或采集并发数需要新的运行目录。
+
+盲评会以新盲号和不同顺序打包，每个包中同一题最多出现一次。先完成所有题目的生成，再开始盲评。报告可直接从已公布的材料离线复算，无需登录 Codex。
+
+## API 缓存对照待测项
+
+本轮已实现并运行 Codex 质量对照。Responses API 的受控实测留待有该入口时执行。后续采集沿用以下口径。
+
+1. 冻结版本、题目、模型、推理与服务档位、区域、并发度和价格生效日期。对同一版本、题目和重复，保存各条件下模型可见输入的相同哈希。多轮性能回放固定历史和用户回复，使各条件所处理的内容一致。独立对话的质量对照另行评分。
+2. 无缓存质量对照使用 `prompt_cache_options.mode = explicit` 且不设置断点，校验读写计数均为零。冷写和热读均将同一个显式断点放在首个开发者消息中稳定内容的末尾。先核实该前缀达到模型的 1,024 个可见输入 token 下限。短前缀标记为不适用，保持原题长度。若另设统一长背景，作为单独的性能实验报告。[OpenAI 缓存说明](https://developers.openai.com/api/docs/guides/prompt-caching)
+3. 同一区组随机安排冷写与预热组的发送顺序，分配独立的缓存键，组内只复用自己的键和前缀。冷写要求 `cached_tokens = 0` 且 `cache_write_tokens > 0`。热组先等预热请求完成，再发送同前缀的正式请求。校验正式请求读到目标断点的长度且没有新写入。未命中、部分命中、超时及重试留在原分配中，另列完整命中子集。[OpenAI 缓存说明](https://developers.openai.com/api/docs/guides/prompt-caching)
+4. 分别记录首个可见 token 和完整响应的墙钟时间。热组同时报告用户等待、单次预热的时间与费用、以及按实际复用次数摊销的费用。成本按普通输入、缓存读取、各 TTL 的写入及输出分项，使用运行当天该模型和服务档位的价格。注明按实际用量与价格核算的数额及账单核对状态。没有用量或账单依据的金额保留为空。[OpenAI 用量与成本口径](https://developers.openai.com/api/docs/guides/prompt-caching)

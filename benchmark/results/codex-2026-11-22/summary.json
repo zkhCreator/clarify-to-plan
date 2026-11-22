@@ -1,0 +1,1520 @@
+{
+  "arms": {
+    "none": {
+      "scheduled": 72,
+      "generated": 72,
+      "attempts": 72,
+      "initial_technical_failures": 0,
+      "graded": 72,
+      "passed": 59,
+      "pass_rate": 0.8194444444444444,
+      "case_majorities": [
+        19,
+        24
+      ],
+      "confirmed_fraction_scheduled": 0.8194444444444444,
+      "within_repeat_flips": [
+        8,
+        72
+      ],
+      "dialogue_time": {
+        "n": 72,
+        "median_ms": 7805.5,
+        "p95_ms": 17442
+      },
+      "attempt_wall_time": {
+        "n": 72,
+        "median_ms": 7868.5,
+        "p95_ms": 17500
+      },
+      "first_visible_time": {
+        "n": 84,
+        "median_ms": 4534.0,
+        "p95_ms": 5378
+      },
+      "reported_usage": {
+        "inputTokens": 603135,
+        "cachedInputTokens": 574720,
+        "cacheWriteInputTokens": 0,
+        "outputTokens": 14488,
+        "reasoningOutputTokens": 65
+      },
+      "turns_with_positive_cache_reads": [
+        83,
+        84
+      ],
+      "turns_with_usage": 84,
+      "observed_turns": 84,
+      "api_cold_elapsed_ms": null,
+      "api_hot_elapsed_ms": null,
+      "api_cold_cost_usd": null,
+      "api_hot_cost_usd": null,
+      "api_cold_minus_hot_elapsed_ms": null,
+      "api_cold_minus_hot_cost_usd": null
+    },
+    "release": {
+      "scheduled": 72,
+      "generated": 72,
+      "attempts": 72,
+      "initial_technical_failures": 0,
+      "graded": 72,
+      "passed": 71,
+      "pass_rate": 0.9861111111111112,
+      "case_majorities": [
+        24,
+        24
+      ],
+      "confirmed_fraction_scheduled": 0.9861111111111112,
+      "within_repeat_flips": [
+        2,
+        72
+      ],
+      "dialogue_time": {
+        "n": 72,
+        "median_ms": 7904.0,
+        "p95_ms": 17127
+      },
+      "attempt_wall_time": {
+        "n": 72,
+        "median_ms": 7968.5,
+        "p95_ms": 17188
+      },
+      "first_visible_time": {
+        "n": 84,
+        "median_ms": 4399.5,
+        "p95_ms": 5430
+      },
+      "reported_usage": {
+        "inputTokens": 691696,
+        "cachedInputTokens": 631680,
+        "cacheWriteInputTokens": 0,
+        "outputTokens": 15412,
+        "reasoningOutputTokens": 75
+      },
+      "turns_with_positive_cache_reads": [
+        82,
+        84
+      ],
+      "turns_with_usage": 84,
+      "observed_turns": 84,
+      "api_cold_elapsed_ms": null,
+      "api_hot_elapsed_ms": null,
+      "api_cold_cost_usd": null,
+      "api_hot_cost_usd": null,
+      "api_cold_minus_hot_elapsed_ms": null,
+      "api_cold_minus_hot_cost_usd": null
+    },
+    "main": {
+      "scheduled": 72,
+      "generated": 72,
+      "attempts": 72,
+      "initial_technical_failures": 0,
+      "graded": 72,
+      "passed": 70,
+      "pass_rate": 0.9722222222222222,
+      "case_majorities": [
+        23,
+        24
+      ],
+      "confirmed_fraction_scheduled": 0.9722222222222222,
+      "within_repeat_flips": [
+        2,
+        72
+      ],
+      "dialogue_time": {
+        "n": 72,
+        "median_ms": 7514.5,
+        "p95_ms": 15953
+      },
+      "attempt_wall_time": {
+        "n": 72,
+        "median_ms": 7577.0,
+        "p95_ms": 16134
+      },
+      "first_visible_time": {
+        "n": 84,
+        "median_ms": 4344.5,
+        "p95_ms": 5715
+      },
+      "reported_usage": {
+        "inputTokens": 876873,
+        "cachedInputTokens": 776576,
+        "cacheWriteInputTokens": 0,
+        "outputTokens": 13955,
+        "reasoningOutputTokens": 0
+      },
+      "turns_with_positive_cache_reads": [
+        83,
+        84
+      ],
+      "turns_with_usage": 84,
+      "observed_turns": 84,
+      "api_cold_elapsed_ms": null,
+      "api_hot_elapsed_ms": null,
+      "api_cold_cost_usd": null,
+      "api_hot_cost_usd": null,
+      "api_cold_minus_hot_elapsed_ms": null,
+      "api_cold_minus_hot_cost_usd": null
+    }
+  },
+  "rater_agreement": {
+    "n": 216,
+    "gain": 2,
+    "loss": 2,
+    "both_pass": 198,
+    "both_fail": 14,
+    "agreement": 212,
+    "kappa": 0.8650000000000001,
+    "individual_checks_agree": 644,
+    "individual_checks_n": 648,
+    "third_reviews_completed": 4,
+    "anchors": {
+      "A": [
+        4,
+        4
+      ],
+      "B": [
+        4,
+        4
+      ]
+    },
+    "re_reads": {
+      "A": [
+        12,
+        12
+      ],
+      "B": [
+        12,
+        12
+      ]
+    }
+  },
+  "comparisons": {
+    "none→release": {
+      "runs": {
+        "n": 72,
+        "gain": 12,
+        "loss": 0,
+        "both_pass": 59,
+        "both_fail": 1
+      },
+      "case_majorities": {
+        "n": 24,
+        "gain": 5,
+        "loss": 0,
+        "both_pass": 19,
+        "both_fail": 0
+      }
+    },
+    "none→main": {
+      "runs": {
+        "n": 72,
+        "gain": 12,
+        "loss": 1,
+        "both_pass": 58,
+        "both_fail": 1
+      },
+      "case_majorities": {
+        "n": 24,
+        "gain": 4,
+        "loss": 0,
+        "both_pass": 19,
+        "both_fail": 1
+      }
+    },
+    "release→main": {
+      "runs": {
+        "n": 72,
+        "gain": 1,
+        "loss": 2,
+        "both_pass": 69,
+        "both_fail": 0
+      },
+      "case_majorities": {
+        "n": 24,
+        "gain": 0,
+        "loss": 1,
+        "both_pass": 23,
+        "both_fail": 0
+      }
+    }
+  },
+  "families": {
+    "clarify": {
+      "none": [
+        6,
+        12
+      ],
+      "release": [
+        12,
+        12
+      ],
+      "main": [
+        12,
+        12
+      ]
+    },
+    "handoff": {
+      "none": [
+        10,
+        12
+      ],
+      "release": [
+        12,
+        12
+      ],
+      "main": [
+        12,
+        12
+      ]
+    },
+    "equivalence": {
+      "none": [
+        10,
+        12
+      ],
+      "release": [
+        12,
+        12
+      ],
+      "main": [
+        10,
+        12
+      ]
+    },
+    "evidence": {
+      "none": [
+        12,
+        12
+      ],
+      "release": [
+        12,
+        12
+      ],
+      "main": [
+        12,
+        12
+      ]
+    },
+    "trial": {
+      "none": [
+        9,
+        12
+      ],
+      "release": [
+        11,
+        12
+      ],
+      "main": [
+        12,
+        12
+      ]
+    },
+    "continuity": {
+      "none": [
+        12,
+        12
+      ],
+      "release": [
+        12,
+        12
+      ],
+      "main": [
+        12,
+        12
+      ]
+    }
+  },
+  "single_turn": {
+    "none": [
+      53,
+      60
+    ],
+    "release": [
+      59,
+      60
+    ],
+    "main": [
+      58,
+      60
+    ]
+  },
+  "cases": [
+    {
+      "id": "Q01",
+      "family": "clarify",
+      "runs": {
+        "none": [
+          false,
+          false,
+          false
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": false,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 3,
+          "loss": 0,
+          "both_pass": 0,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 3,
+          "loss": 0,
+          "both_pass": 0,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q02",
+      "family": "clarify",
+      "runs": {
+        "none": [
+          false,
+          false,
+          false
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": false,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 3,
+          "loss": 0,
+          "both_pass": 0,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 3,
+          "loss": 0,
+          "both_pass": 0,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q03",
+      "family": "clarify",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q04",
+      "family": "clarify",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q05",
+      "family": "handoff",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q06",
+      "family": "handoff",
+      "runs": {
+        "none": [
+          false,
+          false,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": false,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 2,
+          "loss": 0,
+          "both_pass": 1,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 2,
+          "loss": 0,
+          "both_pass": 1,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q07",
+      "family": "handoff",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q08",
+      "family": "handoff",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q09",
+      "family": "equivalence",
+      "runs": {
+        "none": [
+          false,
+          false,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          false,
+          true,
+          false
+        ]
+      },
+      "majority": {
+        "none": false,
+        "release": true,
+        "main": false
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 2,
+          "loss": 0,
+          "both_pass": 1,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 1,
+          "loss": 1,
+          "both_pass": 0,
+          "both_fail": 1
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 2,
+          "both_pass": 1,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q10",
+      "family": "equivalence",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q11",
+      "family": "equivalence",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q12",
+      "family": "equivalence",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q13",
+      "family": "evidence",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q14",
+      "family": "evidence",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q15",
+      "family": "evidence",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q16",
+      "family": "evidence",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q17",
+      "family": "trial",
+      "runs": {
+        "none": [
+          false,
+          true,
+          true
+        ],
+        "release": [
+          false,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 2,
+          "both_fail": 1
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 1,
+          "loss": 0,
+          "both_pass": 2,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 1,
+          "loss": 0,
+          "both_pass": 2,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q18",
+      "family": "trial",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q19",
+      "family": "trial",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q20",
+      "family": "trial",
+      "runs": {
+        "none": [
+          false,
+          true,
+          false
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": false,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 2,
+          "loss": 0,
+          "both_pass": 1,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 2,
+          "loss": 0,
+          "both_pass": 1,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q21",
+      "family": "continuity",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q22",
+      "family": "continuity",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q23",
+      "family": "continuity",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    },
+    {
+      "id": "Q24",
+      "family": "continuity",
+      "runs": {
+        "none": [
+          true,
+          true,
+          true
+        ],
+        "release": [
+          true,
+          true,
+          true
+        ],
+        "main": [
+          true,
+          true,
+          true
+        ]
+      },
+      "majority": {
+        "none": true,
+        "release": true,
+        "main": true
+      },
+      "pairs": {
+        "none→release": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "none→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        },
+        "release→main": {
+          "n": 3,
+          "gain": 0,
+          "loss": 0,
+          "both_pass": 3,
+          "both_fail": 0
+        }
+      }
+    }
+  ]
+}
