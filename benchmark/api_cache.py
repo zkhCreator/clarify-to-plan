@@ -75,6 +75,7 @@ def units():
                     "arm": r["arm"],
                     "scope": "natural",
                     "turn": index,
+                    "expected_turns": len(attempt["turns"]),
                     "history": history.copy(),
                 }
             )
@@ -89,6 +90,7 @@ def units():
                     "arm": arm,
                     "scope": "shared_catalog",
                     "turn": 1,
+                    "expected_turns": 1,
                     "history": [
                         {
                             "role": "user",
