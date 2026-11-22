@@ -44,9 +44,9 @@ python3 benchmark/report.py /tmp/clarify-benchmark /tmp/clarify-benchmark-report
 python3 benchmark/report.py --verify /tmp/clarify-benchmark-report
 ~~~
 
-## API 缓存对照待测项
+## Responses API 缓存对照
 
-本轮已实现并运行 Codex 质量对照。Responses API 的受控实测留待有该入口时执行。后续采集沿用以下口径。
+Codex 质量对照和 Responses API 性能采集分别保留运行记录。独立 API 采集器可重放同一输入，记录实际读写、耗时与计费用量。首轮登记的对照口径如下。[API 采集与离线复算](API_CACHE.md)
 
 1. 冻结版本、题目、模型、推理与服务档位、区域、并发度和价格生效日期。对同一版本、题目和重复，保存各条件下模型可见输入的相同哈希。多轮性能回放固定历史和用户回复，使各条件所处理的内容一致。独立对话的质量对照另行评分。
 2. 无缓存质量对照使用 `prompt_cache_options.mode = explicit` 且不设置断点，校验读写计数均为零。冷写和热读均将同一个显式断点放在首个开发者消息中稳定内容的末尾。先核实该前缀达到模型的 1,024 个可见输入 token 下限。短前缀标记为不适用，保持原题长度。若另设统一长背景，作为单独的性能实验报告。[OpenAI 缓存说明](https://developers.openai.com/api/docs/guides/prompt-caching)
