@@ -7,11 +7,53 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from api_cache import Collector, input_blocks, payload, prefixes, units
+from api_cache import (
+    Collector,
+    fatal,
+    input_blocks,
+    payload,
+    prefixes,
+    transient,
+    units,
+)
 from cache_transport import extract, mark_error, sse_events
 
 
 class CacheTests(unittest.TestCase):
+    def test_only_a_verified_clean_write_opens_cold_and_warm_groups(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            c = Collector(Path(tmp), None, "test")
+            c.prefix = {"natural": {"main": "fixture"}}
+            count = [{"input_tokens": 2048, "status": "completed"}]
+            dirty = [
+                {
+                    "status": "completed",
+                    "usage": {"read": 512, "write": 1536, "output": 0},
+                }
+            ]
+            clean = [
+                {
+                    "status": "completed",
+                    "usage": {"read": 0, "write": 2040, "output": 0},
+                }
+            ]
+            with patch.object(c, "attempts", side_effect=[count, dirty]):
+                dirty_config = c.calibrate()
+            self.assertIsNone(dirty_config["natural"]["main"]["eligible"])
+            with patch.object(c, "attempts", side_effect=[count, clean]):
+                self.assertEqual(
+                    c.calibrate()["natural"]["main"]["boundary_tokens"], 2040
+                )
+            unit = {"id": "sample-t1", "arm": "main", "scope": "natural", "history": []}
+            with patch.object(
+                c, "attempts", return_value=[{"status": "completed"}]
+            ) as measure:
+                c.collect(unit, dirty_config)
+            self.assertEqual(measure.call_count, 1)
+            self.assertEqual(measure.call_args.args[0], "sample-t1-uncached")
+        self.assertTrue(fatal({"http": 200, "error": "permission_denied"}))
+        self.assertTrue(transient({"http": 200, "error": "rate_limit_exceeded"}))
+
     def test_same_input_and_separate_assignments(self):
         sample = next(x for x in units() if x["turn"] == 2)
         self.assertEqual(

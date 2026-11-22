@@ -24,8 +24,9 @@ SUBJECTS = HERE / "results/codex-2026-11-22/subjects.jsonl"
 MODEL = PROTOCOL["model"]
 WORKERS = 4
 BASE = "你是一名中文助手。请按本次指令作答。"
-RATES = {"ordinary": 8, "read": 0.4, "write_30m": 10, "write_12h": 20, "output": 40}
-PRICE_URL = "https://developers.openai.com/api/docs/pricing"
+PRICE_SNAPSHOT = json.loads((HERE / "api_cache_rates.json").read_text())
+RATES = PRICE_SNAPSHOT["rates"]
+PRICE_URL = PRICE_SNAPSHOT["source"]
 SEED = 20261122
 RULES = {
     "model": MODEL,
@@ -128,6 +129,13 @@ def fatal(r):
         "invalid_api_key",
         "model_not_found",
         "account_deactivated",
+        "organization_deactivated",
+        "permission_denied",
+        "access_denied",
+        "unsupported_parameter",
+        "invalid_value",
+        "invalid_request_error",
+        "unsupported_country_region_territory",
     )
 
 
@@ -135,7 +143,8 @@ def transient(r):
     return not fatal(r) and (
         r.get("http") in (408, 409, 429)
         or (r.get("http") or 0) >= 500
-        or r.get("error") in ("transport", "stream_ended", "server_error")
+        or r.get("error")
+        in ("transport", "stream_ended", "server_error", "rate_limit_exceeded")
     )
 
 
@@ -167,6 +176,7 @@ class Collector:
             rows.append(
                 {
                     "status": "in_flight",
+                    "request_sha256": sha(body),
                     "utc": utc(),
                     "http": None,
                     "usage": {},
@@ -177,7 +187,7 @@ class Collector:
             )
             write_json(path, rows)
             r = request(self.token, body, counting)
-            rows[-1] = dict(r, retry_delay_ms=delay)
+            rows[-1] = dict(r, retry_delay_ms=delay, request_sha256=sha(body))
             write_json(path, rows)
         if rows and stop_on_fatal and fatal(rows[-1]):
             self.reason = {
@@ -202,15 +212,19 @@ class Collector:
                 )
                 tokens = count[-1].get("input_tokens") if count else None
                 observed = None
-                if tokens is None or tokens >= 1024:
+                if tokens is not None and tokens >= 1024:
                     rows = self.attempts(
                         tag + "-prewarm",
                         payload(prefix, [], "prewarm", self.key(tag, "probe")),
                     )
-                    if rows:
+                    if len(rows) == 1 and rows[0].get("status") == "completed":
                         u = rows[-1]["usage"]
-                        if "read" in u and "write" in u:
-                            observed = u["read"] + u["write"]
+                        if (
+                            u.get("read") == 0
+                            and u.get("write", 0) >= 1024
+                            and u.get("output") == 0
+                        ):
+                            observed = u["write"]
                 eligible = (
                     True
                     if observed and observed >= 1024
@@ -235,7 +249,7 @@ class Collector:
         config = calibration[unit["scope"]][unit["arm"]]
         policies = (
             ["uncached"]
-            if config["eligible"] is False
+            if config["eligible"] is not True
             else ["uncached", "cold", "warm"]
         )
         random.Random(f"{SEED}:{unit['id']}").shuffle(policies)
@@ -282,8 +296,9 @@ def run(folder, key):
         "seed": SEED,
         "ttl": "30m",
         "rates_usd_per_million": RATES,
+        "rate_snapshot_sha256": digest((HERE / "api_cache_rates.json").read_bytes()),
         "price_source": PRICE_URL,
-        "tariff_date": "2026-11-22",
+        "tariff_date": PRICE_SNAPSHOT["observed_on"],
         "credential_origin": "user-started local process",
         "endpoint": "https://api.openai.com/v1/responses",
         "region": "default API origin; physical processing region not exposed",
