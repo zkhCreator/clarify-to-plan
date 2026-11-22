@@ -456,10 +456,9 @@ def publish(folder, out):
         f: digest((out / f).read_bytes())
         for f in ("subjects.jsonl", "ratings.jsonl", "judge-attempts.jsonl")
     }
-    if (out / "review.md").is_file():
-        manifest["artifacts_sha256"]["review.md"] = digest(
-            (out / "review.md").read_bytes()
-        )
+    for name in ("review.md", "first-turn.json"):
+        if (out / name).is_file():
+            manifest["artifacts_sha256"][name] = digest((out / name).read_bytes())
     write_json(out / "manifest.json", manifest)
     write_json(out / "summary.json", summary)
     (out / "report.md").write_text(render(summary, manifest))
@@ -588,6 +587,10 @@ def verify(out):
         raise ValueError("Published report differs")
     if flip_matrix(summary) != (out / "flips.csv").read_text():
         raise ValueError("Published per-case flip matrix differs")
+    if "first-turn.json" in manifest["artifacts_sha256"]:
+        from first_turn import verify as verify_first_turn
+
+        verify_first_turn(out)
     print(
         f"Reproduced {len(records)} samples, {len(votes)} blinded readings and every reported verdict."
     )

@@ -35,6 +35,15 @@ python3 -m unittest discover -s benchmark
 
 盲评会以新盲号和不同顺序打包，每个包中同一题最多出现一次。先完成所有题目的生成，再开始盲评。报告可直接从已公布的材料离线复算，无需登录 Codex。
 
+如果多轮模拟器暴露出偏差，可以独立复核同一批答卷的首轮。该复核仅向裁判发送用户原问、第一轮答复及该题预先冻结的首轮判据。两次独立评判分歧时，另开第三次判定。生成的附加记录单独保存。
+
+~~~sh
+python3 benchmark/first_turn.py /tmp/clarify-benchmark-report --run /tmp/clarify-first-turn --codex /path/to/codex
+cp /tmp/clarify-first-turn/first-turn.json /tmp/clarify-benchmark-report/
+python3 benchmark/report.py /tmp/clarify-benchmark /tmp/clarify-benchmark-report
+python3 benchmark/report.py --verify /tmp/clarify-benchmark-report
+~~~
+
 ## API 缓存对照待测项
 
 本轮已实现并运行 Codex 质量对照。Responses API 的受控实测留待有该入口时执行。后续采集沿用以下口径。

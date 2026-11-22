@@ -1,15 +1,55 @@
 """Offline regression tests for fact disclosure, blind assignment and paired verdicts."""
 
 import json
+import tempfile
 import unittest
+from pathlib import Path
 
 from codex_client import RunError
+from first_turn import analyze as analyze_first_turn
+from first_turn import cards as first_turn_cards
 from grade import packets, parse_grades
 from report import majority, paired, reliability
 from run import CASES, PROTOCOL, load_packages, oracle, schedule
 
 
 class BenchmarkTest(unittest.TestCase):
+    def test_first_turn_reread_excludes_the_simulators_answer(self):
+        sample = {
+            "id": "Q01-1-none",
+            "case": "Q01",
+            "passed": False,
+            "attempts": [
+                {
+                    "ok": True,
+                    "turns": [
+                        {"user": "初始请求", "answer": "首轮澄清"},
+                        {"user": "第二轮才透露", "answer": "第二轮答复"},
+                    ],
+                }
+            ],
+        }
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder)
+            (path / "subjects.jsonl").write_text(json.dumps(sample) + "\n")
+            items = first_turn_cards(path)
+        self.assertEqual(
+            items[sample["id"]],
+            {
+                "case": "Q01",
+                "user": "初始请求",
+                "answer": "首轮澄清",
+                "criterion": CASES[0]["criteria"][0],
+            },
+        )
+        votes = [
+            {"key": sample["id"], "rater": "first-" + r, "vote": {"pass": value}}
+            for r, value in (("A", False), ("B", True), ("C", True))
+        ]
+        score = analyze_first_turn(items, votes)
+        self.assertEqual(score["agreement"], [0, 1])
+        self.assertEqual(score["arms"]["none"], [1, 1])
+
     def test_git_revisions_and_balanced_assignment(self):
         packages, hashes = load_packages()
         self.assertEqual(hashes["none"]["files"], {})

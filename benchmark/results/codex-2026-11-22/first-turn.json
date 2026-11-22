@@ -1,0 +1,892 @@
+{
+  "model": "gpt-6.2-astra",
+  "effort": "medium",
+  "code_sha256": "2d535b57e1b41d5665e6b10a2bbab7122a3975451630153d9efe485498b62719",
+  "cards_sha256": "ca3569bc9b084dedac78532a976ac4fdc9145a4ae27b6ca88d1b10a3d0b27bd2",
+  "readings": [
+    {
+      "blind_id": "3a53af52d349f1",
+      "key": "Q03-2-release",
+      "kind": "primary",
+      "packet": "first-B-006",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头就问最近一次换教室时最想先解决什么，让用户在漏看通知、地点冲突和不清楚谁未收到之间选择，未预设实现方式。"
+      }
+    },
+    {
+      "blind_id": "2aafec7a3d4106",
+      "key": "Q04-3-release",
+      "kind": "primary",
+      "packet": "first-B-006",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "先问“来回找人”卡在哪一步，区分查找持有人、催还工具和寻找归还位置三种需求，而未直接选用系统。"
+      }
+    },
+    {
+      "blind_id": "7405df9482f9a1",
+      "key": "Q01-3-main",
+      "kind": "primary",
+      "packet": "first-B-006",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "先问接班人回头问了什么，让用户从进度、异常和安排中选出最想省掉的追问，也可直接复述当时的原话。"
+      }
+    },
+    {
+      "blind_id": "a914e80170b58f",
+      "key": "Q02-1-main",
+      "kind": "primary",
+      "packet": "first-B-006",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "先问交稿时最常反复确认什么，让用户在定稿状态、公开授权和材料完整性之间选择，或用上次的追问说明改善方向。"
+      }
+    },
+    {
+      "blind_id": "5a4d6c19423dcf",
+      "key": "Q01-2-none",
+      "kind": "primary",
+      "packet": "first-A-007",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": false,
+        "evidence": "“设备与安排”里的问题供值班人员填写交接单，答复没有问用户换班时最常被追问什么或最想解决什么。"
+      }
+    },
+    {
+      "blind_id": "69f6e80a27a63f",
+      "key": "Q04-2-none",
+      "kind": "primary",
+      "packet": "first-A-007",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "结尾请用户根据最近一次经历区分忘了借用人、工具被转借和反复催还三种痛点，并未预先选定表格或应用。"
+      }
+    },
+    {
+      "blind_id": "c33ffc08768ebb",
+      "key": "Q03-1-none",
+      "kind": "primary",
+      "packet": "first-A-007",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复先问最近一次如何通知，再请用户区分“没看到通知”和“看到了却不确定去哪间教室”，没有锁定实现方式。"
+      }
+    },
+    {
+      "blind_id": "35e02a612dbf60",
+      "key": "Q02-3-main",
+      "kind": "primary",
+      "packet": "first-A-007",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头就问交稿时最常确认什么，让用户在版本与完整性、录音核对、公开授权之间选择，也允许用上次交稿的实际问话说明。"
+      }
+    },
+    {
+      "blind_id": "6a18846f278bc9",
+      "key": "Q04-1-release",
+      "kind": "primary",
+      "packet": "first-B-009",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头问“你通常是为了什么事找人”，让用户区分找工具、等归还和安排交接，没有预选系统。"
+      }
+    },
+    {
+      "blind_id": "1247736dace539",
+      "key": "Q03-3-release",
+      "kind": "primary",
+      "packet": "first-B-009",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头问“你最想先解决哪一种混乱”，用户可以从地点不一致、漏看通知、不清楚谁已收到中选一项，也可以描述其他出错环节。"
+      }
+    },
+    {
+      "blind_id": "92f3f9241347ee",
+      "key": "Q01-1-release",
+      "kind": "primary",
+      "packet": "first-B-009",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "先问“接班的人后来问了什么”，让用户用换班原话说明痛点，以区分核对已做事项、了解苗情变化和接手续办事项。"
+      }
+    },
+    {
+      "blind_id": "85ad1d42127e87",
+      "key": "Q02-1-none",
+      "kind": "primary",
+      "packet": "first-B-009",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": false,
+        "evidence": "开头区分了流程问题和授权问题，却没问用户遇到哪一种；直到给出统一交稿消息和复核规则后，才请用户举例。"
+      }
+    },
+    {
+      "blind_id": "d13cf601ee7baa",
+      "key": "Q03-3-none",
+      "kind": "primary",
+      "packet": "first-B-002",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头让用户在漏收通知、地点说法不一和反复询问最终地点之间选出优先问题，仅在“地点说法不一”的条件下举了发布通知的例子。"
+      }
+    },
+    {
+      "blind_id": "71231774900bba",
+      "key": "Q04-1-none",
+      "kind": "primary",
+      "packet": "first-B-002",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "结尾请用户回想最近一次借用，区分是找不到借用人还是知道找谁却要反复催还，以决定优先查去向还是提醒归还，并未选定系统。"
+      }
+    },
+    {
+      "blind_id": "a9146eb8f48856",
+      "key": "Q01-2-release",
+      "kind": "primary",
+      "packet": "first-B-002",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头询问接班人最常追问什么，让用户从任务完成情况、异常跟进和待办归属中选择，也可直接复述上次的问题。"
+      }
+    },
+    {
+      "blind_id": "b2727d66572814",
+      "key": "Q02-3-main",
+      "kind": "primary",
+      "packet": "first-B-002",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "先问交稿时最常确认什么，让用户在版本与材料完整性、录音核对和引用授权之间选择，也可用上次谁问了谁、问了什么来说明。"
+      }
+    },
+    {
+      "blind_id": "168a85d78ea845",
+      "key": "Q03-2-none",
+      "kind": "primary",
+      "packet": "first-A-002",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复请用户回想最近一次换教室，从没收到通知、收到不同教室号、看到通知太晚三种情形中挑出最常见的一种，未预设解决办法。"
+      }
+    },
+    {
+      "blind_id": "8a7bad13addfdb",
+      "key": "Q02-2-release",
+      "kind": "primary",
+      "packet": "first-A-002",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复先问最近交稿时大家反复问什么，让用户在事实核实、授权、稿件交接之间选择，也可以用一句实际被问到的话说明。"
+      }
+    },
+    {
+      "blind_id": "731fa1129bb709",
+      "key": "Q01-3-none",
+      "kind": "primary",
+      "packet": "first-A-002",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": false,
+        "evidence": "答复直接建议在值班群发交接单，“哪棚哪床？”等是交接时要填的内容，并非询问用户换班时最常被追问什么。"
+      }
+    },
+    {
+      "blind_id": "ec686ef161adf4",
+      "key": "Q04-3-release",
+      "kind": "primary",
+      "packet": "first-A-002",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复先问“来回找人”卡在哪一步，让用户选择找持有人、催还或找归还位置，也可描述最近一次经历，没有直接选定系统。"
+      }
+    },
+    {
+      "blind_id": "9a9d81cfcccbe2",
+      "key": "Q03-3-none",
+      "kind": "primary",
+      "packet": "first-A-008",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头让用户选择先解决漏收通知、地点说法不一还是反复询问，指定发布人只是针对地点说法不一的条件性建议。"
+      }
+    },
+    {
+      "blind_id": "35e353ea8b7349",
+      "key": "Q01-2-release",
+      "kind": "primary",
+      "packet": "first-A-008",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复请用户从任务进度、苗情异常和后续责任三类追问中选出最常见的一类，也可以直接提供上次交班时的原话。"
+      }
+    },
+    {
+      "blind_id": "275c3b725890a3",
+      "key": "Q02-3-none",
+      "kind": "primary",
+      "packet": "first-A-008",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": false,
+        "evidence": "开头只是建议回看聊天记录，直到给出交稿卡和再确认规则后，才请用户选择最常卡在版本还是授权，不符合“先问”的要求。"
+      }
+    },
+    {
+      "blind_id": "6a9ba2107f606c",
+      "key": "Q04-3-none",
+      "kind": "primary",
+      "packet": "first-A-008",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "末段请用户区分找不到借用人、反复催还和转借三种痛点，答案会改变登记、提醒或转借交接的优先级，共享表只是可选试法。"
+      }
+    },
+    {
+      "blind_id": "b8378e9ebed9fd",
+      "key": "Q03-1-none",
+      "kind": "primary",
+      "packet": "first-B-008",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复先请用户回顾最近一次通知，再问最困扰的是没看到消息还是看到了却不确定地点，没有预先选定方案。"
+      }
+    },
+    {
+      "blind_id": "f06e7f5dd7e625",
+      "key": "Q02-2-none",
+      "kind": "primary",
+      "packet": "first-B-008",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": false,
+        "evidence": "能区分版本交接与授权问题的“最常重复问的那一句是什么”出现在末尾，此前已推荐交稿卡并给出三步流程。"
+      }
+    },
+    {
+      "blind_id": "3a1d1602b75b60",
+      "key": "Q04-3-none",
+      "kind": "primary",
+      "packet": "first-B-008",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "末尾请用户区分找不到借用人、反复催还和发生转借三种情况，以决定先解决哪一环，共享表只是可选做法。"
+      }
+    },
+    {
+      "blind_id": "54c418e0a8d726",
+      "key": "Q01-1-none",
+      "kind": "primary",
+      "packet": "first-B-008",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": false,
+        "evidence": "答复直接给出交接单，“我先去哪里、几点做什么”是让接班人复述待办，并非请用户说明哪类交接问题最困扰他们。"
+      }
+    },
+    {
+      "blind_id": "89f18869d5254d",
+      "key": "Q03-1-main",
+      "kind": "primary",
+      "packet": "first-B-003",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头问最近一次换教室时哪种情况最让用户头疼，让用户在漏收消息、地点说法冲突和不清楚谁已看到之间选择，并未指定实现方式。"
+      }
+    },
+    {
+      "blind_id": "a5ad532100a18e",
+      "key": "Q04-1-main",
+      "kind": "primary",
+      "packet": "first-B-003",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头问用户最想省掉哪种来回，区分了找持有人、问归还时间和到期催还三个不同需求，没有直接选用系统。"
+      }
+    },
+    {
+      "blind_id": "9f983533aeee8a",
+      "key": "Q01-1-main",
+      "kind": "primary",
+      "packet": "first-B-003",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复问接班人通常卡在哪里，让用户从分清已做与待做、接续观察异常、找到所需物品中选出优先项，也可直接复述上次的追问。"
+      }
+    },
+    {
+      "blind_id": "f3b370b8c1d335",
+      "key": "Q02-3-release",
+      "kind": "primary",
+      "packet": "first-B-003",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复先问最近一次交稿卡在哪类确认，区分了授权范围、事实核实进度和定稿交接三个改善方向，也允许用户用上次的一句追问作答。"
+      }
+    },
+    {
+      "blind_id": "93f217820eac6d",
+      "key": "Q04-1-release",
+      "kind": "primary",
+      "packet": "first-A-003",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头问“你通常是为了什么事找人”，让用户区分找工具、问归还时间或安排交接，没有预设系统。"
+      }
+    },
+    {
+      "blind_id": "d53e2d776868d6",
+      "key": "Q02-1-release",
+      "kind": "primary",
+      "packet": "first-A-003",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "在确定改法前，答复让用户判断最近一次交稿是卡在内容核对、授权还是版本与负责人，也允许直接说出当时谁问了什么。"
+      }
+    },
+    {
+      "blind_id": "afb9a3478360df",
+      "key": "Q01-1-release",
+      "kind": "primary",
+      "packet": "first-A-003",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头问“接班的人后来问了什么”，让用户按防止漏做或重复做、判断苗情、接续待办来选，也可用换班时的原话说明痛点。"
+      }
+    },
+    {
+      "blind_id": "ad1af6f8998d62",
+      "key": "Q03-3-release",
+      "kind": "primary",
+      "packet": "first-A-003",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头问“你最想先解决哪一种混乱”，让用户在统一地点说法、让同学及时看到通知、查清谁尚未收到之间确定优先项，没有指定实现方式。"
+      }
+    },
+    {
+      "blind_id": "fedbc077801448",
+      "key": "Q03-3-main",
+      "kind": "primary",
+      "packet": "first-B-005",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头问用户最想避免哪种情况，让用户在消息冲突、有人漏看和不清楚谁还需提醒之间选优先项，没有预设通知方式。"
+      }
+    },
+    {
+      "blind_id": "c3de6851d0b67f",
+      "key": "Q04-2-release",
+      "kind": "primary",
+      "packet": "first-B-005",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "先问来回找人是想查明工具在谁手里、何时能还，还是归还后由谁接收或放在哪里，区分了需求而未指定系统。"
+      }
+    },
+    {
+      "blind_id": "6b1f74bbe904fe",
+      "key": "Q01-3-release",
+      "kind": "primary",
+      "packet": "first-B-005",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "先请用户复述接班人上次追问的话，也允许直接选最常见的一类，从而区分确认工作是否做过、跟进异常和接手未完事项。"
+      }
+    },
+    {
+      "blind_id": "72f4914f937bdd",
+      "key": "Q02-2-main",
+      "kind": "primary",
+      "packet": "first-B-005",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头问交稿时最常确认什么，让用户在核对录音原意、确认公开授权和辨认定稿之间选择，或举例说明上次是谁向谁确认了什么。"
+      }
+    },
+    {
+      "blind_id": "0d075a3155e092",
+      "key": "Q02-1-main",
+      "kind": "primary",
+      "packet": "first-A-006",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头先问交稿时最常反复确认什么，让用户在定稿状态、公开授权和材料齐备三类问题中选择，也可描述上次的追问。"
+      }
+    },
+    {
+      "blind_id": "6f5a45110af51e",
+      "key": "Q03-3-main",
+      "kind": "primary",
+      "packet": "first-A-006",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "首句问最想避免哪种情况，让用户在消息冲突、有人漏看和逐人确认之间选定优先项，未预设通知方式。"
+      }
+    },
+    {
+      "blind_id": "2cd915df0786da",
+      "key": "Q01-1-none",
+      "kind": "primary",
+      "packet": "first-A-006",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": false,
+        "evidence": "答复直接给出交接单，末尾的确认是让接班人复述行动，并未问用户最想减少哪类追问。"
+      }
+    },
+    {
+      "blind_id": "0050c3181f588e",
+      "key": "Q04-1-main",
+      "kind": "primary",
+      "packet": "first-A-006",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头先问最想省掉哪种来回，区分了找持有人、问归还时间和到期催还三种需求，没有先选定系统。"
+      }
+    },
+    {
+      "blind_id": "8167585c9b3684",
+      "key": "Q02-2-main",
+      "kind": "primary",
+      "packet": "first-A-001",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头先问交稿时最常确认哪句话，让用户在核对原话、确认公开授权、辨认定稿之间选择，也可描述上次的实例。"
+      }
+    },
+    {
+      "blind_id": "d49ca46e7cce96",
+      "key": "Q04-3-main",
+      "kind": "primary",
+      "packet": "first-A-001",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头先问最想省掉找工具、等工具还是催归还的麻烦，用具体问题区分需求，没有预设系统。"
+      }
+    },
+    {
+      "blind_id": "85b0db1ff4ee6a",
+      "key": "Q01-1-main",
+      "kind": "primary",
+      "packet": "first-A-001",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复先问接班人通常卡在哪里，让用户选择分清待办、跟进异常或找到物品，也可直接复述上次被追问的话。"
+      }
+    },
+    {
+      "blind_id": "99284173e4a7ec",
+      "key": "Q03-1-main",
+      "kind": "primary",
+      "packet": "first-A-001",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头请用户回想最近一次换教室，从漏收消息、地点说法冲突、无法确认谁已看到中指出最头疼的环节，未锁定通知方式。"
+      }
+    },
+    {
+      "blind_id": "ccb26035a422c1",
+      "key": "Q02-3-release",
+      "kind": "primary",
+      "packet": "first-A-005",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头先问最近一次交稿“卡在哪一类”，让用户区分授权范围、事实核实或定稿交接，也可直接举例说明谁问了什么。"
+      }
+    },
+    {
+      "blind_id": "87c6224b57e329",
+      "key": "Q01-3-release",
+      "kind": "primary",
+      "packet": "first-A-005",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "首句就问接班人当时回头问了什么，用户可复述原话，也可从确认工作是否完成、跟踪异常或明确后续分工中选出痛点。"
+      }
+    },
+    {
+      "blind_id": "e951538a680053",
+      "key": "Q04-2-release",
+      "kind": "primary",
+      "packet": "first-A-005",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "先问来回找人是为了弄清什么，让用户区分找持有人、问归还时间和核实归还去向，没有预先选定系统。"
+      }
+    },
+    {
+      "blind_id": "a800c8ac995df0",
+      "key": "Q03-1-release",
+      "kind": "primary",
+      "packet": "first-A-005",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头就问“你最想先解决哪种情况”，请用户在漏看通知、无法辨认最终地点和不清楚谁未收到之间选择，未指定实现方式。"
+      }
+    },
+    {
+      "blind_id": "83ae82f6ca5851",
+      "key": "Q01-2-main",
+      "kind": "primary",
+      "packet": "first-A-009",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头就请用户从活儿是否做完、哪批苗要留意、东西或联系人在哪三类追问中选一类，也允许直接举例。"
+      }
+    },
+    {
+      "blind_id": "5aec4aaa6895f6",
+      "key": "Q04-2-main",
+      "kind": "primary",
+      "packet": "first-A-009",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复先问找人是为了查工具在谁手里、安排下次使用，还是催归还，没有预设系统。"
+      }
+    },
+    {
+      "blind_id": "882a5961a17be0",
+      "key": "Q03-2-release",
+      "kind": "primary",
+      "packet": "first-A-009",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头请用户选择优先解决漏看通知、教室号冲突还是不清楚谁未收到，也允许描述其他情况，未锁定实现方式。"
+      }
+    },
+    {
+      "blind_id": "9fe2f1f8c5bd45",
+      "key": "Q02-2-none",
+      "kind": "primary",
+      "packet": "first-A-009",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": false,
+        "evidence": "答复先推荐交稿卡并列出三步做法，直到末尾才问最常重复哪句话，以区分版本交接和授权范围问题。"
+      }
+    },
+    {
+      "blind_id": "8d22563366697e",
+      "key": "Q03-2-main",
+      "kind": "primary",
+      "packet": "first-B-001",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头就请用户在地点不一致、漏看通知和反复确认之间选出最想改善的一项，也允许描述实际出错的环节，没有预设实现方式。"
+      }
+    },
+    {
+      "blind_id": "4d4a4135a1730d",
+      "key": "Q01-2-none",
+      "kind": "primary",
+      "packet": "first-B-001",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": false,
+        "evidence": "答复直接给出交接单，其中的问句供值班人员填写设备和当日安排，并未询问用户换班时最常被追问什么。"
+      }
+    },
+    {
+      "blind_id": "da9abd14a2bae8",
+      "key": "Q04-3-main",
+      "kind": "primary",
+      "packet": "first-B-001",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头就问用户最想省掉的是找工具、等工具还是催归还，并邀请举最近一次的例子，而未先选定系统。"
+      }
+    },
+    {
+      "blind_id": "a96b778584f2f5",
+      "key": "Q02-3-none",
+      "kind": "primary",
+      "packet": "first-B-001",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": false,
+        "evidence": "虽然开头区分了版本与授权问题，但直到给出交稿卡和确认规则后，才在末尾请用户选择最常卡住的情形。"
+      }
+    },
+    {
+      "blind_id": "f4d033bf574f06",
+      "key": "Q01-2-main",
+      "kind": "primary",
+      "packet": "first-B-007",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头就问接班人最常回头问什么，让用户从任务进度、苗情异常、物品或联系人中选一类，也可直接举例。"
+      }
+    },
+    {
+      "blind_id": "e5b90ddae73652",
+      "key": "Q03-1-release",
+      "kind": "primary",
+      "packet": "first-B-007",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复先问最想解决哪种情况，区分漏看通知、消息冲突和无法确认谁已收到，没有预设通知方式。"
+      }
+    },
+    {
+      "blind_id": "2e59c42828d927",
+      "key": "Q04-2-none",
+      "kind": "primary",
+      "packet": "first-B-007",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "在梳理借还流程后，末尾具体追问上次是忘了借用人、发生转借还是反复催还，以确定优先需求，并未选定表格或应用。"
+      }
+    },
+    {
+      "blind_id": "4a23f713fe49b8",
+      "key": "Q02-1-release",
+      "kind": "primary",
+      "packet": "first-B-007",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复在选定改进办法前，先请用户判断上次卡在内容核对、授权还是版本与负责人，也允许用当时的一句提问说明情况。"
+      }
+    },
+    {
+      "blind_id": "20b72be12f820d",
+      "key": "Q04-2-main",
+      "kind": "primary",
+      "packet": "first-B-004",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头就问找人是为了查工具去向、确认何时可用，还是催还，并请用户选出最想解决的一项，没有预选系统。"
+      }
+    },
+    {
+      "blind_id": "c43ffcfbefb13b",
+      "key": "Q02-2-release",
+      "kind": "primary",
+      "packet": "first-B-004",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "先问最近一次交稿时反复确认的是什么，再区分事实核对、公开授权和稿件交接，让用户选最常见的一类或举出原话。"
+      }
+    },
+    {
+      "blind_id": "726bc42bf0b1df",
+      "key": "Q01-3-none",
+      "kind": "primary",
+      "packet": "first-B-004",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": false,
+        "evidence": "答复直接建议在值班群发交接单，其中“哪棚哪床？”等问题是给交班人填表用的，并未询问用户换班时最常回头确认什么。"
+      }
+    },
+    {
+      "blind_id": "14cd0b3754d745",
+      "key": "Q03-2-none",
+      "kind": "primary",
+      "packet": "first-B-004",
+      "rater": "first-B",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复请用户回想最近一次换教室，区分漏收通知、教室号冲突和看到通知太晚，并按发生频率确定优先项，未指定实现方式。"
+      }
+    },
+    {
+      "blind_id": "8a2fad56efbd2a",
+      "key": "Q01-3-main",
+      "kind": "primary",
+      "packet": "first-A-004",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "开头就问“哪类问题最想先省掉”，用户可以在进度、异常、安排中选择，也可以给出上次接班时的原话。"
+      }
+    },
+    {
+      "blind_id": "ba9d1088dd875a",
+      "key": "Q03-2-main",
+      "kind": "primary",
+      "packet": "first-A-004",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "答复先请用户在地点不一致、漏看通知、反复确认三种情况中选出最想解决的一种，没有指定实现方式。"
+      }
+    },
+    {
+      "blind_id": "0ba1b0a3f4b698",
+      "key": "Q02-1-none",
+      "kind": "primary",
+      "packet": "first-A-004",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": false,
+        "evidence": "答复先建议统一交稿消息并给出模板，直到末尾才问大家反复问的是哪句话，未先用实例厘清改善方向。"
+      }
+    },
+    {
+      "blind_id": "d67f4908537dd7",
+      "key": "Q04-1-none",
+      "kind": "primary",
+      "packet": "first-A-004",
+      "rater": "first-A",
+      "attempts": 1,
+      "vote": {
+        "pass": true,
+        "evidence": "末尾明确问是找不到工具去向，还是知道借用人却要反复催还，答案会决定优先查去向还是提醒归还，且未预选系统。"
+      }
+    }
+  ],
+  "summary": {
+    "agreement": [
+      36,
+      36
+    ],
+    "arms": {
+      "none": [
+        6,
+        12
+      ],
+      "release": [
+        12,
+        12
+      ],
+      "main": [
+        12,
+        12
+      ]
+    }
+  }
+}
