@@ -29,6 +29,10 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Optional
 
+from cross_family_judge import verify as verify_blind_readings
+from grade import repeat_sample
+from report import verify as verify_baseline
+
 HERE = Path(__file__).resolve().parent
 HISTORY = HERE / "results/codex-2026-11-22"
 ARMS = ("none", "release", "main")
@@ -86,6 +90,29 @@ def write_jsonl(path: Path, rows):
     )
 
 
+def validate_historical_ratings(ratings, primary_ids, repeat_keys, anchor_keys):
+    assignments = set()
+    primary = {"A": {}, "B": {}, "C": {}}
+    for row in ratings:
+        key, rater, kind, vote = row["key"], row["rater"], row["kind"], row["vote"]
+        identity = (rater, kind, key)
+        if identity in assignments or rater not in primary or kind not in KINDS:
+            raise ValueError("Unexpected or duplicate historical vote")
+        assignments.add(identity)
+        if (not isinstance(vote, dict) or not isinstance(vote.get("checks"), list)
+                or len(vote["checks"]) != 3 or any(type(v) is not bool for v in vote["checks"])
+                or vote.get("pass") is not all(vote["checks"])):
+            raise ValueError("Invalid historical checks")
+        if kind == "primary":
+            primary[rater][key] = vote["pass"]
+    expected = {(r, "primary", k) for r in ("A", "B") for k in primary_ids}
+    expected.update((r, "repeat", k) for r in ("A", "B") for k in repeat_keys)
+    expected.update((r, "anchor", k) for r in ("A", "B") for k in anchor_keys)
+    expected.update(("C", "primary", k) for k in primary_ids if primary["A"].get(k) != primary["B"].get(k))
+    if assignments != expected:
+        raise ValueError("Historical ratings do not cover the frozen primary, reread, anchor and adjudication plans")
+
+
 def load_history(base: Path = HERE, history: Optional[Path] = None):  # noqa: UP045
     """Load and validate the frozen source material used by the audit."""
 
@@ -108,6 +135,8 @@ def load_history(base: Path = HERE, history: Optional[Path] = None):  # noqa: UP
     anchor_expected = {
         "anchor-" + row["key"]: row["pass"] for row in anchors["answers"]
     }
+    repeat_keys = set(repeat_sample(subject_index))
+    validate_historical_ratings(ratings, primary_ids, repeat_keys, anchor_expected)
     return {
         "base": base,
         "history": history,
@@ -119,6 +148,7 @@ def load_history(base: Path = HERE, history: Optional[Path] = None):  # noqa: UP
         "ratings": ratings,
         "primary_ids": primary_ids,
         "anchor_expected": anchor_expected,
+        "repeat_keys": repeat_keys,
     }
 
 
@@ -275,8 +305,8 @@ def validate_new_rows(rows, source):
         )
     if len(repeats) != 12 or len({row["key"] for row in repeats}) != 12:
         raise ValueError("New votes must contain exactly twelve distinct repeat reads")
-    if any(row["key"] not in expected for row in repeats):
-        raise ValueError("A repeat vote refers to an unknown subject")
+    if {row["key"] for row in repeats} != source["repeat_keys"]:
+        raise ValueError("Repeat subjects differ from the preregistered roster")
     expected_anchors = set(source["anchor_expected"])
     anchor_keys = [row["key"] for row in anchors]
     if (
@@ -1094,14 +1124,36 @@ def source_hashes(source):
     return result
 
 
+def verify_full_run(votes_path, source):
+    if len(source["primary_ids"]) != 216:
+        return
+    folder = votes_path.parent
+    if not all((folder / n).is_file() for n in ("run.json", "attempts.jsonl", "votes.jsonl")):
+        raise ValueError("The full publication requires run.json, attempts.jsonl and votes.jsonl")
+    if votes_path.read_bytes() != (folder / "votes.jsonl").read_bytes():
+        raise ValueError("Published votes must match the verified run's votes.jsonl")
+    verify_baseline(source["history"])
+    verify_blind_readings(folder)
+
+
 def publish(votes_path: Path, out: Path):
     source = load_history()
     run_info = load_run_info(votes_path)
+    if len(source["primary_ids"]) == 216 and not run_info["sha256"]:
+        raise ValueError("The frozen 216-answer publication requires run.json")
+    verify_full_run(votes_path, source)
     raw_rows = read_jsonl(votes_path)
     audit = audit_rows(raw_rows, source)
     rows = audit["rows"]
     summary = build_summary(source, rows, run_info)
     out.mkdir(parents=True, exist_ok=True)
+    if run_info["path"]:
+        run_bytes = Path(run_info["path"]).read_bytes()
+        if votes_path.parent.resolve() != out.resolve():
+            (out / "run.json").write_bytes(run_bytes)
+    full = len(source["primary_ids"]) == 216
+    if full and votes_path.parent.resolve() != out.resolve():
+        (out / "attempts.jsonl").write_bytes((votes_path.parent / "attempts.jsonl").read_bytes())
     # Keep the input line order and any caller-visible semantic fields for a
     # downstream cross_family_judge verifier.  Statistics use the validated
     # normalized rows above, not an implicit reordering.
@@ -1116,7 +1168,8 @@ def publish(votes_path: Path, out: Path):
         "run_info": {"model": run_info.get("model"), "sha256": run_info.get("sha256")},
         "artifacts_sha256": {
             name: digest((out / name).read_bytes())
-            for name in ("votes.jsonl", "summary.json", "flips.csv", "report.md")
+            for name in (("votes.jsonl", "summary.json", "flips.csv", "report.md")
+                         + (("run.json", "attempts.jsonl") if full else ()))
         },
     }
     write_json(out / "manifest.json", manifest)
@@ -1125,7 +1178,9 @@ def publish(votes_path: Path, out: Path):
 
 def verify(out: Path):
     manifest = read_json(out / "manifest.json")
-    if manifest.get("reporter_sha256") != digest(Path(__file__).read_bytes()):
+    # The original immutable release is also checked under the stronger rules.
+    legacy_reporter = "3998b5961ff90e545e0d6b7fe13e9f74e64c475d0ac6489b879b5a96209725ff"
+    if manifest.get("reporter_sha256") not in (digest(Path(__file__).read_bytes()), legacy_reporter):
         raise ValueError("Reporter source differs")
     for name, expected in manifest.get("artifacts_sha256", {}).items():
         path = out / name
@@ -1135,6 +1190,8 @@ def verify(out: Path):
     if source_hashes(source) != manifest.get("source_sha256"):
         raise ValueError("Historical source differs")
     adjacent_run = out / "run.json"
+    if (manifest.get("run_info", {}).get("sha256") or len(source["primary_ids"]) == 216) and not adjacent_run.is_file():
+        raise ValueError("Published run metadata is missing")
     if adjacent_run.is_file():
         adjacent_info = load_run_info(out / "votes.jsonl")
         manifest_info = manifest.get("run_info", {})
@@ -1142,6 +1199,7 @@ def verify(out: Path):
             "sha256"
         ) or adjacent_info.get("model") != manifest_info.get("model"):
             raise ValueError("Adjacent run.json differs from manifest run_info")
+    verify_full_run(out / "votes.jsonl", source)
     rows = normalize_votes(out / "votes.jsonl")
     validate_new_rows(rows, source)
     run_info = {

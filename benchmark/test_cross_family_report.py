@@ -94,6 +94,7 @@ def synthetic_source():
         "subject_index": subject_index,
         "ratings": ratings,
         "primary_ids": set(subject_index),
+        "repeat_keys": set(sorted(subject_index)[:12]),
         "anchor_expected": anchors,
     }
 
