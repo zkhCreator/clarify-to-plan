@@ -25,4 +25,6 @@ git clone --branch v1.0.0 https://github.com/zkhCreator/clarify-to-plan.git .age
 
 ## 基准测试
 
+修订版复用了 180 份单轮答卷和全部 36 份多轮首答，只重跑修正模拟用户后的第二轮。报告给出三组通过率、逐题翻转、Astra 与 Qwen 盲评一致性及离线复算方法。615 个正式缓存任务全部完成，173/177 对冷热请求通过严格配对校验。[修订版质量报告](benchmark/results/corrected-2026-11-22/report.md) · [冷热实测与费用](benchmark/CACHE_RUN.md) · [红蓝队复核](benchmark/REVISION_REVIEW.md) · [复算说明](benchmark/README.md) · [本轮稳定 Release](https://github.com/zkhCreator/clarify-to-plan/releases/tag/benchmark-reviewed-2026-11-22)
+
 2026-11-22 的 Codex 对照用同一组 24 道题比较无 skill、v1.0.0 和当时的 main，每题各跑三次。报告提供逐题判定、翻转、盲评一致性、原生用量和实际等待时间。[实测报告](benchmark/results/codex-2026-11-22/report.md) · [补充复核](benchmark/results/codex-2026-11-22/review.md) · [运行与复算](benchmark/README.md) · [本轮固定版本](https://github.com/zkhCreator/clarify-to-plan/releases/tag/benchmark-2026-11-22)
