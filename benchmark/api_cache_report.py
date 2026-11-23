@@ -1,7 +1,8 @@
 """Publish a credential-free, offline report for a Responses cache run.
 
 The collector in :mod:`api_cache` writes one JSON list per scheduled request
-under ``attempts/`` and keeps the assignment plus stage names in ``units/``.
+under ``attempts/``. The frozen population and calibrated allocation include
+units that were never attempted. Stage records contain observations only.
 This reporter never calls the API and never publishes prompt or provider text.
 It copies only an explicit allow-list of run metadata, timings, usage counters,
 hashes and error codes into a public snapshot and ledger.  The published
@@ -216,6 +217,8 @@ def clean_manifest(value):
     for key in (
         "format",
         "from",
+        "population_sha256",
+        "disclosures_sha256",
         "model",
         "workers",
         "seed",
@@ -270,6 +273,8 @@ def clean_manifest(value):
         # The nonce is an assignment identifier, not a credential.  Keep only
         # its shape-free hash so it cannot be mistaken for a secret.
         result["nonce_sha256"] = sha_bytes(value["nonce"].encode())
+    elif safe_hash(value.get("nonce_sha256")):
+        result["nonce_sha256"] = value["nonce_sha256"]
     return result
 
 
@@ -347,7 +352,7 @@ def clean_unit(value):
     result["prefix_sha256"] = safe_hash(value.get("prefix_sha256"))
     result["visible_sha256"] = safe_hash(value.get("visible_sha256"))
     stages = value.get("stages")
-    if isinstance(stages, dict):
+    if isinstance(stages, (dict, list)):
         result["stages"] = sorted(str(x) for x in stages if str(x) in STAGES)
     else:
         result["stages"] = []
@@ -360,9 +365,33 @@ def load_snapshot_from_run(run: Path):
     manifest = read_json(run / "manifest.json")
     if not isinstance(manifest, dict):
         raise TypeError("RUN/manifest.json is missing or invalid")
+    if manifest.get("format") != 2:
+        raise ValueError("Cannot determine a verified allocation denominator from a legacy run without a frozen population")
     status = clean_status(read_json(run / "status.json", {}))
     calibration = clean_calibration(read_json(run / "calibration.json", {}))
-    units = []
+    plan = read_json(run / "allocation.json")
+    population = read_json(run / "population.json")
+    if not isinstance(population, list) or sha_json(population) != manifest.get("population_sha256"):
+        raise ValueError("Missing or altered frozen cache population")
+    if plan is None and (run / "units").is_dir():
+        raise ValueError("Missing allocation for a run with formal units")
+    if plan is not None:
+        if not isinstance(plan, list) or len(plan) != len(population):
+            raise ValueError("Allocation differs from the frozen population")
+        normalized = [dict(row, policies=["uncached"]) for row in plan]
+        if normalized != population:
+            raise ValueError("Changed unit identity or input in frozen allocation")
+    planned = plan if plan is not None else population
+    units_by_id = {}
+    for row in planned or []:
+        unit = clean_unit(row)
+        if unit is None or unit["id"] in units_by_id:
+            raise ValueError("Invalid or duplicate planned unit")
+        eligible = calibration.get(unit["scope"], {}).get(unit["arm"], {}).get("eligible")
+        expected = POLICIES if eligible is True and plan is not None else ("uncached",)
+        if len(unit["policies"]) != len(expected) or set(unit["policies"]) != set(expected):
+            raise ValueError("Cache policies differ from calibrated allocation")
+        units_by_id[unit["id"]] = unit
     unit_context = {}
     units_dir = run / "units"
     if units_dir.is_dir():
@@ -370,20 +399,15 @@ def load_snapshot_from_run(run: Path):
             unit = clean_unit(read_json(path))
             if unit is None:
                 continue
-            units.append(unit)
-            for stage in unit.get("stages", []):
-                unit_context["attempts/" + unit["id"] + "-" + stage + ".json"] = {
-                    "kind": "unit",
-                    "unit_id": unit["id"],
-                    "sample": unit.get("sample"),
-                    "arm": unit.get("arm"),
-                    "scope": unit.get("scope"),
-                    "turn": unit.get("turn"),
-                    "policy": "warm" if stage == "prewarm" else stage,
-                    "stage": stage,
-                    "visible_sha256": unit.get("visible_sha256"),
-                    "prefix_sha256": unit.get("prefix_sha256"),
-                }
+            expected = units_by_id.get(unit["id"])
+            if planned is not None and (expected is None or any(
+                unit.get(k) != v for k, v in expected.items() if k != "stages"
+            )):
+                raise ValueError("Observed unit differs from frozen allocation")
+            units_by_id[unit["id"]] = unit
+    units = sorted(units_by_id.values(), key=lambda x: x["id"])
+    for job in unit_jobs({"units": units}):
+        unit_context[job["attempt_file"]] = {k: v for k, v in job.items() if k not in ("attempt_file", "job", "attempts")}
     attempts = {}
     attempts_dir = run / "attempts"
     if attempts_dir.is_dir():
@@ -398,13 +422,89 @@ def load_snapshot_from_run(run: Path):
         "run_manifest": clean_manifest(manifest),
         "run_status": status,
         "calibration": calibration,
-        "units": sorted(units, key=lambda x: x["id"]),
+        "units": units,
+        "allocation_finalized": plan is not None,
         "attempts": attempts,
         "unit_context": unit_context,
     }
     # A partially copied RUN can have a stage in the unit record but no file.
     # Its missing request is retained as a scheduled, unobserved job below.
     return snapshot
+
+
+def validate_calibration(snapshot, prefixes):
+    records = snapshot["attempts"]
+    calibrated = snapshot["calibration"]
+    if snapshot["allocation_finalized"] and {
+        (scope, arm) for scope, arms in calibrated.items() for arm in arms
+    } != {(scope, arm) for scope, arms in prefixes.items() for arm in arms}:
+        raise ValueError("The formal allocation requires all prefix calibrations")
+    for scope, arms in calibrated.items():
+        for arm, row in arms.items():
+            if scope not in prefixes or arm not in prefixes[scope]:
+                raise ValueError("Unknown calibrated prefix")
+            tag = f"attempts/cal-{scope}-{arm}"
+            counts = records.get(tag + "-count.json", [])
+            measured = counts[-1].get("input_tokens") if counts else None
+            prime = records.get(tag + "-prewarm.json", [])
+            boundary = None
+            if measured is not None and measured >= 1024 and len(prime) == 1:
+                attempt = prime[0]
+                usage = attempt["usage"]
+                if (attempt.get("status") == "completed" and usage.get("read") == 0
+                        and usage.get("write", 0) >= 1024 and usage.get("output") == 0):
+                    boundary = usage["write"]
+            eligible = True if boundary else False if measured is not None and measured < 1024 else None
+            if (row.get("count") != measured or row.get("boundary_tokens") != boundary
+                    or row.get("eligible") is not eligible or row.get("prefix_sha256") != sha_json(prefixes[scope][arm])):
+                raise ValueError("Calibrated assignment differs from the prefix token and prewarm receipts")
+
+
+def validate_public_allocation(snapshot):
+    """Rebuild the full schedule from the public corrected inputs, including unattempted jobs."""
+    import api_cache
+
+    manifest = snapshot["run_manifest"]
+    if manifest.get("format") != 2:
+        raise ValueError("A public cache report requires the frozen population format")
+    source = manifest.get("source", {})
+    required = ("api_cache.py", "cache_transport.py", "corrected_user.py", "second_turn_disclosures.json",
+                "cases.json", "protocol.json", "run.py")
+    if source != {name: sha_bytes((api_cache.HERE / name).read_bytes()) for name in required}:
+        raise ValueError("Cache source fingerprints differ")
+    if (manifest.get("subjects_sha256") != sha_bytes(api_cache.SUBJECTS.read_bytes())
+            or manifest.get("disclosures_sha256") != sha_bytes(api_cache.DISCLOSURES.read_bytes())
+            or manifest.get("rules") != api_cache.RULES or manifest.get("model") != api_cache.MODEL
+            or manifest.get("rate_snapshot_sha256") != sha_bytes((api_cache.HERE / "api_cache_rates.json").read_bytes())
+            or manifest.get("rates_usd_per_million") != api_cache.RATES):
+        raise ValueError("Cache replay or pricing differs from the frozen protocol")
+    catalog = api_cache.prefixes()
+    validate_calibration(snapshot, catalog)
+    replay = api_cache.units()
+    def plan(calibration):
+        return [api_cache.assignment(u, catalog[u["scope"]][u["arm"]], calibration) for u in replay]
+
+    if sha_json(plan({})) != manifest.get("population_sha256"):
+        raise ValueError("Cache population does not reproduce from public inputs")
+    calibrated = snapshot["calibration"] if snapshot["allocation_finalized"] else {}
+    expected = sorted(plan(calibrated), key=lambda u: u["id"])
+    observed = [{k: v for k, v in u.items() if k != "stages"} for u in snapshot["units"]]
+    if observed != expected:
+        raise ValueError("Public cache allocation differs from the frozen replay")
+    expected_context = {j["attempt_file"]: {k:v for k,v in j.items() if k not in ("attempts","attempt_file","job")}
+                        for j in unit_jobs(snapshot)}
+    expected_jobs = set(expected_context)
+    if snapshot["unit_context"] != expected_context:
+        raise ValueError("Public cache request population differs from the allocation")
+    allowed = {"attempts/access.json"}
+    for scope, arms in catalog.items():
+        for arm in arms:
+            for action in ("count", "prewarm"):
+                allowed.add(f"attempts/cal-{scope}-{arm}-{action}.json")
+    if not snapshot["allocation_finalized"] and set(snapshot["attempts"]) & expected_jobs:
+        raise ValueError("Formal attempts require a frozen allocation")
+    if set(snapshot["attempts"]) - expected_jobs - allowed:
+        raise ValueError("Unassigned response attempt")
 
 
 def clean_snapshot(value):
@@ -414,6 +514,7 @@ def clean_snapshot(value):
         "format": REPORT_FORMAT,
         "run_manifest": clean_manifest(value.get("run_manifest", {})),
         "run_status": clean_status(value.get("run_status", {})),
+        "allocation_finalized": value.get("allocation_finalized") is True,
         "calibration": clean_calibration(value.get("calibration", {})),
         "units": [],
         "attempts": {},
@@ -543,18 +644,19 @@ def total_elapsed(attempts):
     return sum(values)
 
 
-def with_retry_first_visible(attempts, effective_index, effective):
-    if effective_index is None or finite_int(effective.get("ttft_ms")) is None:
-        return None
-    prefix = 0
-    for attempt in attempts[:effective_index]:
+def with_retry_first_visible(attempts):
+    """Return the first visible text across all attempts, even if its stream later fails."""
+    elapsed_before = 0
+    for attempt in attempts:
+        elapsed_before += finite_int(attempt.get("retry_delay_ms")) or 0
+        first_visible = finite_int(attempt.get("ttft_ms"))
+        if first_visible is not None:
+            return elapsed_before + first_visible
         elapsed = finite_int(attempt.get("elapsed_ms"))
-        delay = finite_int(attempt.get("retry_delay_ms"))
         if elapsed is None:
             return None
-        prefix += elapsed + (delay or 0)
-    delay = finite_int(effective.get("retry_delay_ms")) or 0
-    return prefix + delay + effective["ttft_ms"]
+        elapsed_before += elapsed
+    return None
 
 
 def target_tokens(snapshot, scope, arm):
@@ -675,6 +777,10 @@ def cost_for(attempt, manifest):
             write30, write12 = 0, 0
         else:
             return null
+    elif write30 is None and write12 == usage["write"]:
+        write30 = 0
+    elif write12 is None and write30 == usage["write"]:
+        write12 = 0
     elif write30 is None or write12 is None:
         return null
     if write30 + write12 != usage["write"]:
@@ -772,9 +878,7 @@ def job_metric(job, snapshot):
         "total_elapsed_ms_including_retries": total,
         "eventual_attempt_elapsed_ms": finite_int(selected.get("elapsed_ms")),
         "ttft_ms": finite_int(selected.get("ttft_ms")),
-        "first_visible_ms_including_retries": with_retry_first_visible(
-            attempts, final_index, selected
-        ),
+        "first_visible_ms_including_retries": with_retry_first_visible(attempts),
         "cache_target_tokens": target,
         "cache_classification": classification,
         "usage": aggregate_usage(attempts),
@@ -784,6 +888,7 @@ def job_metric(job, snapshot):
         ),
         "model": selected.get("model"),
         "service_tier": selected.get("service_tier"),
+        "attempt_identities": [{k: a.get(k) for k in ("model", "service_tier")} for a in attempts],
     }
 
 
@@ -791,6 +896,7 @@ def empty_metric(status):
     return {
         "status": status,
         "scheduled": None,
+        "attempted": None,
         "first_attempt_completed": None,
         "eventual_completed": None,
         "coverage_fraction": None,
@@ -825,6 +931,7 @@ def zero_metric(status="measured_no_verified_hit"):
     value = empty_metric(status)
     for key in (
         "scheduled",
+        "attempted",
         "first_attempt_completed",
         "eventual_completed",
         "initial_failures",
@@ -854,6 +961,7 @@ def summary_metric(metrics, status="measured"):
     return {
         "status": status,
         "scheduled": len(metrics),
+        "attempted": sum(m["attempt_count"] > 0 for m in metrics),
         "first_attempt_completed": first_completed,
         "eventual_completed": len(completed),
         "coverage_fraction": len(completed) / len(metrics) if metrics else None,
@@ -871,7 +979,7 @@ def summary_metric(metrics, status="measured"):
         ),
         "ttft_ms": quantiles([m["ttft_ms"] for m in completed]),
         "first_visible_ms_including_retries": quantiles(
-            [m["first_visible_ms_including_retries"] for m in completed]
+            [m["first_visible_ms_including_retries"] for m in metrics]
         ),
         "cache_classification": dict(sorted(classification.items())),
         "usage_tokens": aggregate_usage(
@@ -909,7 +1017,23 @@ def difference(values):
     }
 
 
-def pair_rows(task_metrics):
+def service_match(metrics, manifest):
+    requested = manifest.get("rules") or {}
+    model = requested.get("model") or manifest.get("model")
+    tier = requested.get("service_tier")
+    identities = [a for m in metrics for a in ((m or {}).get("attempt_identities") or [m or {}])]
+    if any(a.get("service_tier") and a["service_tier"] != tier for a in identities):
+        return "tier_mismatch"
+    if any(a.get("model") and not priced_model(a["model"], model) for a in identities):
+        return "model_mismatch"
+    if not model or not tier or any(not a.get("model") or not a.get("service_tier") for a in identities):
+        return "identity_unavailable"
+    if len({a["model"] for a in identities}) != 1:
+        return "snapshot_mismatch"
+    return "matched"
+
+
+def pair_rows(task_metrics, manifest):
     rows = []
     for task in task_metrics:
         if not task.get("visible_sha256"):
@@ -920,6 +1044,10 @@ def pair_rows(task_metrics):
             r = by_policy.get(right, {}).get("actual")
             if not l or not r:
                 continue
+            stages = [l, r]
+            if "warm" in (left, right):
+                stages.append(by_policy["warm"].get("prewarm"))
+            comparison = service_match(stages, manifest)
             row = {
                 "unit_id": task["unit_id"],
                 "sample": task["sample"],
@@ -929,15 +1057,16 @@ def pair_rows(task_metrics):
                 "visible_sha256": task["visible_sha256"],
                 "left": left,
                 "right": right,
+                "service_match": comparison,
                 "both_policies_verified": (
-                    l["cache_classification"] == EXPECTED_CACHE[left]
+                    comparison == "matched" and l["cache_classification"] == EXPECTED_CACHE[left]
                     and r["cache_classification"] == EXPECTED_CACHE[right]
                 ),
                 "warm_full_hit": (
                     by_policy.get("warm", {})
                     .get("actual", {})
                     .get("cache_classification")
-                    == "full_hit"
+                    == "full_hit" and comparison == "matched"
                     if "warm" in by_policy
                     else None
                 ),
@@ -951,13 +1080,13 @@ def pair_rows(task_metrics):
                 rv = r.get(metric)
                 row[metric + "_delta_right_minus_left"] = (
                     rv - lv
-                    if type(lv) in (int, float) and type(rv) in (int, float)
+                    if comparison == "matched" and type(lv) in (int, float) and type(rv) in (int, float)
                     else None
                 )
             lc = l.get("estimated_usage_cost_usd", {}).get("estimated_usage_usd")
             rc = r.get("estimated_usage_cost_usd", {}).get("estimated_usage_usd")
             row["estimated_usage_cost_usd_delta_right_minus_left"] = (
-                rc - lc if lc is not None and rc is not None else None
+                rc - lc if comparison == "matched" and lc is not None and rc is not None else None
             )
             rows.append(row)
     return rows
@@ -988,6 +1117,7 @@ def pair_summary(rows):
                 continue
             data[label] = {
                 "n": len(chosen),
+                "service_match": dict(Counter(row["service_match"] for row in chosen)),
                 "total_elapsed_ms_including_retries_delta_right_minus_left": difference(
                     [
                         x["total_elapsed_ms_including_retries_delta_right_minus_left"]
@@ -1073,9 +1203,117 @@ def dialogue_summary(snapshot, metrics):
     return result
 
 
+def recorded_costs(ledger, manifest):
+    """Preserve identifiable spend when a different request has no priced receipt."""
+    by_stage = {"access": [], "prefix_count": [], "calibration_prewarm": [], "formal": [], "prewarm": []}
+    for row in ledger:
+        if row.get("kind") == "unit":
+            group = "prewarm" if row.get("stage") == "prewarm" else "formal"
+        elif row["job"] == "access":
+            group = "access"
+        elif row["job"].endswith("-count"):
+            group = "prefix_count"
+        else:
+            group = "calibration_prewarm"
+        by_stage[group].append(cost_for(row, manifest)["estimated_usage_usd"])
+    return {
+        group: {
+            "recorded_attempts": len(values),
+            "priced_attempts": sum(v is not None for v in values),
+            "observed_priced_subtotal_usd": round(sum(v for v in values if v is not None), 12)
+            if any(v is not None for v in values) else None,
+        } for group, values in by_stage.items()
+    }
+
+
+def verified_readout(tasks, pairs):
+    """Compare the same cold/warm units; include one prewarm in the all-in cost and wait."""
+    paired_ids = {
+        r["unit_id"] for r in pairs
+        if (r["left"], r["right"]) == ("cold", "warm") and r["both_policies_verified"]
+    }
+    data = defaultdict(lambda: defaultdict(list))
+    for task in tasks:
+        stages = data[task["scope"], task["arm"]]
+        policies = task["policies"]
+        uncached = policies.get("uncached", {}).get("actual")
+        if (uncached and uncached["service_match"] == "matched"
+                and uncached["cache_classification"] == EXPECTED_CACHE["uncached"]):
+            stages["uncached"].append((uncached,))
+        if task["unit_id"] in paired_ids:
+            cold = policies["cold"]["actual"]
+            hot = policies["warm"]["actual"]
+            prewarm = policies["warm"]["prewarm"]
+            stages["cold"].append((cold,))
+            stages["warm"].append((hot,))
+            stages["prewarm"].append((prewarm,))
+            stages["warm_including_prewarm"].append((prewarm, hot))
+
+    result = {}
+    for (scope, arm), stages in sorted(data.items()):
+        values = {}
+        for stage in ("uncached", "cold", "warm", "prewarm", "warm_including_prewarm"):
+            groups = stages[stage]
+            waits, visible, costs = [], [], []
+            for group in groups:
+                timing = [m["total_elapsed_ms_including_retries"] for m in group]
+                cost = [m["estimated_usage_cost_usd"]["estimated_usage_usd"] for m in group]
+                if all(v is not None for v in timing):
+                    waits.append(sum(timing))
+                if all(v is not None for v in cost):
+                    costs.append(sum(cost))
+                if len(group) == 1 and group[0].get("first_visible_ms_including_retries") is not None:
+                    visible.append(group[0]["first_visible_ms_including_retries"])
+            values[stage] = {"units": len(groups), "wait_ms": quantiles(waits),
+                             "first_visible_ms": quantiles(visible), "priced_units": len(costs),
+                             "mean_usage_usd": round(statistics.mean(costs), 12) if costs else None}
+        result.setdefault(scope, {})[arm] = values
+    return result
+
+
+def readout_table(summary):
+    lines = [
+        "## 已验证请求的耗时与单次费用", "",
+        ("各耗时为客户端中位数，单位为秒。每格依次为首个可见文本和完整响应。无缓存列取本组已验证的对照请求。"
+        "冷写和热读只取两边、预热的身份与计数均核实的同一批输入。长目录每组仅三个单元。"), "",
+        "| 输入范围 | 版本 | 已验证无缓存/分配 | 有效冷热配对/分配 | 无缓存首字/完整 s | 冷写首字/完整 s | 热读首字/完整 s | 预热加热读完整 s |",
+        "|---|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    money = ["", "单次费用按有完整计费计数的样本取算术平均，单位为美元。末列为同一输入的一次预热与一次热读之和。各列的耗时与费用分母见机读字段 `verified_readout`。", "",
+             "| 输入范围 | 版本 | 无缓存 USD | 冷写 USD | 热读 USD | 单次预热 USD | 含预热的热组 USD |",
+             "|---|---|---:|---:|---:|---:|---:|"]
+    def seconds(value):
+        return f"{value / 1000:.3f}" if value is not None else "—"
+
+    for scope, arms in summary["verified_readout"].items():
+        for arm in ARM_NAMES:
+            if arm not in arms:
+                continue
+            row = arms[arm]
+            name = f"| {summary['scope_labels'][scope]} | {ARM_LABELS[arm]} |"
+            assigned = summary["groups"][scope][arm]["cold"]["allocation_itt"]["scheduled"]
+            proof = (f"{row['cold']['units']}/{assigned}" if assigned
+                     else "不适用" if summary["calibration"].get(scope, {}).get(arm, {}).get("eligible") is False else "待定")
+            cells = []
+            for stage in ("uncached", "cold", "warm"):
+                times = row[stage]
+                cells.append(seconds(times["first_visible_ms"]["median_ms"]) + " / " + seconds(times["wait_ms"]["median_ms"])
+                             if times["units"] else "—")
+            all_in = seconds(row["warm_including_prewarm"]["wait_ms"]["median_ms"])
+            uc_scheduled = summary["groups"][scope][arm]["uncached"]["allocation_itt"]["scheduled"]
+            uc_count = f"{row['uncached']['units']}/{uc_scheduled}" if uc_scheduled is not None else "待定"
+            lines.append(name + f" {uc_count} | {proof} | " + " | ".join([*cells, all_in]) + " |")
+            costs = [row[k]["mean_usage_usd"] for k in ("uncached", "cold", "warm", "prewarm", "warm_including_prewarm")]
+            money.append(name + " " + " | ".join(f"{v:.6f}" if v is not None else "—" for v in costs) + " |")
+    return lines + money
+
+
 def build_summary(snapshot):
     jobs = unit_jobs(snapshot)
     metrics = [job_metric(job, snapshot) for job in jobs]
+    manifest = snapshot.get("run_manifest", {})
+    for metric in metrics:
+        metric["service_match"] = service_match([metric], manifest)
     by_unit = defaultdict(dict)
     for metric in metrics:
         pair = by_unit[metric["unit_id"]].setdefault(
@@ -1086,6 +1324,8 @@ def build_summary(snapshot):
         warm = policies.get("warm", {})
         actual = warm.get("actual") or {}
         prime = warm.get("prewarm") or {}
+        if actual:
+            actual["service_match"] = service_match([actual, prime], manifest)
         if (
             actual.get("cache_classification") == "full_hit"
             and prime.get("cache_classification") != "verified_write"
@@ -1127,21 +1367,18 @@ def build_summary(snapshot):
                 if values:
                     allocation = summary_metric(values)
                 else:
-                    assigned_any = any(
-                        u.get("scope") == scope
-                        and u.get("arm") == arm
-                        and policy in u.get("policies", [])
-                        for u in snapshot.get("units", [])
-                    )
-                    allocation = empty_metric(
-                        "not_measured"
-                        if not units_exist
-                        else ("not_assigned" if not assigned_any else "not_measured")
-                    )
+                    eligibility = snapshot.get("calibration", {}).get(scope, {}).get(arm, {}).get("eligible")
+                    if snapshot.get("allocation_finalized"):
+                        reason = "not_assigned"
+                        if policy != "uncached" and eligibility is not True:
+                            reason = "short_prefix" if eligibility is False else "eligibility_unverified"
+                        allocation = zero_metric(reason)
+                    else:
+                        allocation = empty_metric("allocation_pending" if units_exist else "not_measured")
                 verified = [
                     x
                     for x in values
-                    if x["cache_classification"] == EXPECTED_CACHE[policy]
+                    if x["cache_classification"] == EXPECTED_CACHE[policy] and x["service_match"] == "matched"
                 ]
                 subgroup = (
                     summary_metric(
@@ -1193,17 +1430,19 @@ def build_summary(snapshot):
                     else None
                 ),
             }
+    ledger = ledger_rows(snapshot)
     operations = []
     known_unit_files = {j["attempt_file"] for j in jobs}
-    for row in ledger_rows(snapshot):
+    for row in ledger:
         if row["attempt_file"] not in known_unit_files:
             operations.append(row)
-    pairs = pair_rows(task_metrics)
-    manifest = snapshot.get("run_manifest", {})
+    pairs = pair_rows(task_metrics, manifest)
     return {
         "format": REPORT_FORMAT,
         "run": manifest,
         "status": snapshot.get("run_status", {}),
+        "planned_units": len(snapshot["units"]),
+        "allocation_finalized": snapshot.get("allocation_finalized", False),
         "calibration": snapshot.get("calibration", {}),
         "scope_labels": {
             "natural": "自然前缀",
@@ -1213,17 +1452,19 @@ def build_summary(snapshot):
         "groups": grouped,
         "dialogues": dialogue_summary(snapshot, metrics),
         "paired_differences": pair_summary(pairs),
+        "verified_readout": verified_readout(task_metrics, pairs),
         "requests": metrics,
         "tasks": task_metrics,
         "operations": operations,
-        "ledger_rows": len(ledger_rows(snapshot)),
+        "ledger_rows": len(ledger),
+        "recorded_costs": recorded_costs(ledger, manifest),
         "definitions": {
             "successful_response": sorted(TERMINAL_SUCCESS),
             "total_elapsed": "sum of every recorded attempt elapsed_ms plus retry_delay_ms; null if any elapsed is missing",
-            "ttft": "eventual successful attempt ttft_ms; first_visible_ms_including_retries adds preceding attempts and retry delays",
+            "ttft": "ttft_ms is for the final successful attempt. first_visible_ms_including_retries measures first text observed across all attempts including waiting before it, even when the first stream later fails.",
             "ITT": "all assignments in the policy, including cache misses and requests completed only after retry",
             "verified_full_hit": "verified write in this unit followed by a warm read exactly equal to the calibrated breakpoint and zero new writes",
-            "verified_pair": "both policies match the expected server counters for the same unit; a cold write requires zero reads and a write exactly equal to the calibrated breakpoint",
+            "verified_pair": "both policies match the expected cache counters and the requested service tier on the same reported model identity, including the warm-up",
             "cost": "estimated usage cost from recorded token counters and frozen rates; null when model, service tier, rates or required counters are unknown; not a bill",
             "pair_delta": "right policy minus left policy for the same unit and visible input hash",
         },
@@ -1239,7 +1480,7 @@ def render_report(summary, artifact_names=None):
         "",
         f"本轮请求模型为 `{run.get('model') or '待核实'}`，运行状态为 `{status.get('state') or '待核实'}`。实际服务档位取自每次响应的 `service_tier`。",
         "金额按实测用量与冻结费率离线核算，项目账单待核对。尝试明细保留预热、首试、失败和重试。",
-        "若运行在首个正式回放前停止，各组任务数、耗时、用量和费用均显示为待测。",
+        f"本轮登记 {summary['planned_units']} 个输入单元。正式分配表{'已冻结' if summary['allocation_finalized'] else '尚未完成校准'}。各组列出原计划、已尝试与最终完成数。",
         "",
         "## 运行与校准",
         "",
@@ -1259,12 +1500,14 @@ def render_report(summary, artifact_names=None):
     s.extend(
         [
             "",
+            *readout_table(summary),
+            "",
             "## 每请求策略覆盖、时间与缓存判读",
             "",
-            "总耗时涵盖有计时的失败、全部重试及重试等待。这里的完成数包含服务端以 incomplete 结束的响应，例如达到输出上限。首个可见文本耗时（TTFT）统计最终响应中已收到文本的请求。冷、热组各自列出全部分配和服务端计数验证的子集。",
+            "总耗时涵盖有计时的失败、全部重试及重试等待。这里的完成数包含服务端以 incomplete 结束的响应，例如达到输出上限。本表的 TTFT 来自最终有可见文本的响应。上方汇总表的首字时间计至客户端第一次收到可见文本，包括后来中断的流。冷、热组各自列出全部分配和服务端计数验证的子集。",
             "",
-            "| 范围 | 版本 | 策略 | 已记录分配 | 首试完成 | 最终完成 | 重试请求/重试次数 | 总耗时 P50/P95 ms | TTFT P50/P95 ms | 缓存状态与策略相符/最终完成 | 正式请求合计 USD |",
-            "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+            "| 范围 | 版本 | 策略 | 计划 | 已尝试 | 首试完成 | 最终完成 | 重试请求/重试次数 | 总耗时 P50/P95 ms | TTFT P50/P95 ms | 缓存状态与策略相符/最终完成 | 正式请求合计 USD |",
+            "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
         ]
     )
     for scope in sorted(summary.get("groups", {})):
@@ -1284,7 +1527,7 @@ def render_report(summary, artifact_names=None):
                 hits = m["cache_classification"].get(EXPECTED_CACHE[policy], 0)
                 s.append(
                     f"| {summary['scope_labels'].get(scope, scope)} | {ARM_LABELS.get(arm, arm)} | {policy_label} ITT | "
-                    f"{fmt_count(m['scheduled'])} | {fmt_count(m['first_attempt_completed'])} | {fmt_count(m['eventual_completed'])} | "
+                    f"{fmt_count(m['scheduled'])} | {fmt_count(m['attempted'])} | {fmt_count(m['first_attempt_completed'])} | {fmt_count(m['eventual_completed'])} | "
                     f"{fmt_retry(m)} | {fmt_pair(t)} | {fmt_pair(q)} | {fmt_hit(hits, m['eventual_completed'])} | {fmt_money(m['estimated_usage_cost_usd'].get('estimated_usage_usd'))} |"
                 )
                 h = group.get("verified_full_hit_subset") or group.get(
@@ -1295,7 +1538,7 @@ def render_report(summary, artifact_names=None):
                     hq = h["ttft_ms"]
                     s.append(
                         f"| {summary['scope_labels'].get(scope, scope)} | {ARM_LABELS.get(arm, arm)} | {policy} 已验证 | "
-                        f"{fmt_count(h['scheduled'])} | {fmt_count(h['first_attempt_completed'])} | {fmt_count(h['eventual_completed'])} | "
+                        f"{fmt_count(h['scheduled'])} | {fmt_count(h['attempted'])} | {fmt_count(h['first_attempt_completed'])} | {fmt_count(h['eventual_completed'])} | "
                         f"{fmt_retry(h)} | {fmt_pair(ht)} | {fmt_pair(hq)} | "
                         f"{fmt_hit(h['scheduled'], h['eventual_completed'])} | {fmt_money(h['estimated_usage_cost_usd'].get('estimated_usage_usd'))} |"
                     )
@@ -1334,7 +1577,7 @@ def render_report(summary, artifact_names=None):
             "",
             "## 同可见输入的配对差",
             "",
-            "差值取右侧策略减左侧策略。ITT 保留所有分配，verified_full_hit 要求热读已验证，verified_pair 要求两侧均按各自策略得到验证。各项只以两侧均有观测的配对计算。",
+            "差值取右侧策略减左侧策略。ITT 保留全部计划配对。耗时与金额差只取返回相同模型标识及所请求档位的观测，热组也核对预热请求。逐组不匹配原因和数量见机读汇总中的 service_match。verified_pair 还要求两侧的读写计数均符合分配策略。",
             "",
             "| 范围 | 版本 | 配对 | 子集 | 分配数/可比耗时/TTFT/费用 | 总耗时差 P50/P95 ms | TTFT 差 P50/P95 ms | 费用差 P50/P95 USD |",
             "|---|---|---|---|---:|---:|---:|---:|",
@@ -1367,6 +1610,13 @@ def render_report(summary, artifact_names=None):
             "",
         ]
     )
+    s.extend(["", "## 可核算回执小计", "",
+              "按阶段统计有价格依据的回执。若有失败或缺少计费字段，小计只覆盖表中已计价的尝试。前缀计数单列。", "",
+              "| 阶段 | 已记录尝试 | 可计价尝试 | 可核算小计 USD |", "|---|---:|---:|---:|"])
+    stages = {"access": "接入预检", "prefix_count": "前缀计数", "calibration_prewarm": "资格试写",
+              "formal": "正式请求", "prewarm": "正式热组预热"}
+    for stage, row in summary["recorded_costs"].items():
+        s.append(f"| {stages[stage]} | {row['recorded_attempts']} | {row['priced_attempts']} | {fmt_money(row['observed_priced_subtotal_usd'])} |")
     if artifact_names:
         s.extend(
             [
@@ -1426,6 +1676,7 @@ def fmt_hit(hits, completed):
 def publish(run: Path, out: Path):
     snapshot = load_snapshot_from_run(run)
     snapshot = clean_snapshot(snapshot)
+    validate_public_allocation(snapshot)
     summary = build_summary(snapshot)
     ledger = ledger_rows(snapshot)
     out.mkdir(parents=True, exist_ok=True)
@@ -1444,7 +1695,7 @@ def publish(run: Path, out: Path):
     input_hashes = {
         "run/manifest.json": sha_bytes((run / "manifest.json").read_bytes())
     }
-    for name in ("status.json", "calibration.json"):
+    for name in ("status.json", "calibration.json", "population.json", "allocation.json"):
         path = run / name
         if path.is_file():
             input_hashes["run/" + name] = sha_bytes(path.read_bytes())
@@ -1480,13 +1731,17 @@ def verify(out: Path):
         raise ValueError("Invalid published manifest")
     if manifest.get("reporter_sha256") != sha_bytes(Path(__file__).read_bytes()):
         raise ValueError("Reporter source differs")
-    for name, expected in manifest.get("artifacts_sha256", {}).items():
+    artifacts = manifest.get("artifacts_sha256", {})
+    if set(artifacts) != {"snapshot.json", "ledger.jsonl", "summary.json", "report.md"}:
+        raise ValueError("Incomplete cache report artifact manifest")
+    for name, expected in artifacts.items():
         path = out / name
         if not path.is_file() or sha_bytes(path.read_bytes()) != expected:
             raise ValueError("Published artifact checksum differs: " + name)
     snapshot = clean_snapshot(read_json(out / "snapshot.json"))
     if manifest.get("snapshot_sha256") != sha_json(snapshot):
         raise ValueError("Snapshot checksum differs")
+    validate_public_allocation(snapshot)
     expected_ledger = jsonl_text(ledger_rows(snapshot))
     if expected_ledger != (out / "ledger.jsonl").read_text():
         raise ValueError("Ledger does not reproduce")

@@ -111,6 +111,38 @@ class CacheReportTest(unittest.TestCase):
             1,
         )
 
+    def test_verified_readout_includes_one_prewarm_per_pair_and_excludes_wrong_tiers(self):
+        from api_cache_report import verified_readout
+
+        def stage(elapsed, cost):
+            return {
+                "total_elapsed_ms_including_retries": elapsed,
+                "first_visible_ms_including_retries": None,
+                "estimated_usage_cost_usd": {"estimated_usage_usd": cost},
+            }
+
+        tasks, pairs = [], []
+        for i, (prime, hot) in enumerate(((1, 9), (9, 10), (10, 1), (100, 100))):
+            tasks.append({"unit_id": i, "scope": "natural", "arm": "main",
+                          "policies": {"cold": {"actual": stage(8, 0.02)},
+                                       "warm": {"actual": stage(hot, 0.01), "prewarm": stage(prime, 0.03)}}})
+            pairs.append({"unit_id": i, "left": "cold", "right": "warm", "both_policies_verified": i != 3})
+        readout = verified_readout(tasks, pairs)["natural"]["main"]
+        combined = readout["warm_including_prewarm"]
+        self.assertEqual((combined["units"], combined["priced_units"]), (3, 3))
+        self.assertEqual(combined["wait_ms"]["median_ms"], 11)
+        self.assertEqual(combined["mean_usage_usd"], 0.04)
+        self.assertEqual(readout["uncached"]["units"], 0)
+
+    def test_first_visible_text_can_arrive_in_a_failed_stream(self):
+        from api_cache_report import with_retry_first_visible
+
+        first = {"status": "failed", "ttft_ms": 1790, "elapsed_ms": 4343}
+        retried = {"status": "completed", "ttft_ms": 1850, "elapsed_ms": 3360, "retry_delay_ms": 1000}
+        self.assertEqual(with_retry_first_visible([first, retried]), 1790)
+        self.assertEqual(with_retry_first_visible([dict(first, ttft_ms=None), retried]), 7193)
+        self.assertIsNone(with_retry_first_visible([dict(first, ttft_ms=None, elapsed_ms=None), retried]))
+
     def test_preflight_stop_reproduces_offline(self):
         with tempfile.TemporaryDirectory() as tmp:
             folder = Path(tmp)

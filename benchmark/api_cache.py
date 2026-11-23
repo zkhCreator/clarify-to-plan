@@ -18,9 +18,10 @@ import uuid
 from pathlib import Path
 
 from cache_transport import request, utc
+from corrected_user import DISCLOSURES, SUBJECTS, frozen_materials
+from grade import persist_plan
 from run import ARM_NAMES, HERE, PROTOCOL, digest, load_packages, lock, write_json
 
-SUBJECTS = HERE / "results/codex-2026-11-22/subjects.jsonl"
 MODEL = PROTOCOL["model"]
 WORKERS = 4
 BASE = "你是一名中文助手。请按本次指令作答。"
@@ -62,12 +63,13 @@ def prefixes():
 
 def units():
     result = []
-    for line in SUBJECTS.read_text().splitlines():
-        r = json.loads(line)
+    subjects, replies = frozen_materials()
+    for r in subjects:
         attempt = next(a for a in r["attempts"] if a["ok"])
         history = []
         for index, turn in enumerate(attempt["turns"], 1):
-            history.append({"role": "user", "content": turn["user"]})
+            user = replies[r["id"]] if index == 2 else turn["user"]
+            history.append({"role": "user", "content": user})
             result.append(
                 {
                     "id": f"{r['id']}-t{index}",
@@ -101,6 +103,18 @@ def units():
             )
     random.Random(SEED + 51).shuffle(result)
     return result
+
+
+def assignment(unit, prefix, calibration):
+    eligible = calibration.get(unit["scope"], {}).get(unit["arm"], {}).get("eligible")
+    policies = ["uncached", "cold", "warm"] if eligible is True else ["uncached"]
+    random.Random(f"{SEED}:{unit['id']}").shuffle(policies)
+    return {
+        **{k: v for k, v in unit.items() if k != "history"},
+        "policies": policies,
+        "prefix_sha256": sha(prefix),
+        "visible_sha256": sha(input_blocks(prefix, unit["history"], False)),
+    }
 
 
 def input_blocks(prefix, history, with_breakpoint):
@@ -248,26 +262,16 @@ class Collector:
         if self.stop.is_set():
             return
         prefix = self.prefix[unit["scope"]][unit["arm"]]
-        config = calibration[unit["scope"]][unit["arm"]]
-        policies = (
-            ["uncached"]
-            if config["eligible"] is not True
-            else ["uncached", "cold", "warm"]
-        )
-        random.Random(f"{SEED}:{unit['id']}").shuffle(policies)
+        planned = assignment(unit, prefix, calibration)
         path = self.folder / "units" / (unit["id"] + ".json")
         record = (
             json.loads(path.read_text())
             if path.exists()
-            else {
-                **{k: v for k, v in unit.items() if k != "history"},
-                "policies": policies,
-                "prefix_sha256": sha(prefix),
-                "visible_sha256": sha(input_blocks(prefix, unit["history"], False)),
-                "stages": {},
-            }
+            else {**planned, "stages": {}}
         )
-        for policy in policies:
+        if any(record.get(k) != v for k, v in planned.items()):
+            raise ValueError("Stored unit no longer matches its allocation")
+        for policy in planned["policies"]:
             if self.stop.is_set():
                 break
             key = self.key(unit["id"], policy)
@@ -286,12 +290,24 @@ class Collector:
 
 def run(folder, key):
     stamp = folder / "manifest.json"
+    replay = units()
+    prefix = prefixes()
+
+    def plan(calibration):
+        return [assignment(unit, prefix[unit["scope"]][unit["arm"]], calibration) for unit in replay]
+
+    population = plan({})
     fixed = {
-        "from": "benchmark-2026-11-22",
+        "format": 2,
+        "model": MODEL,
+        "from": "benchmark-2026-11-22 / corrected second-turn disclosures",
+        "population_sha256": sha(population),
+        "disclosures_sha256": digest(DISCLOSURES.read_bytes()),
         "subjects_sha256": digest(SUBJECTS.read_bytes()),
         "source": {
             f: digest((HERE / f).read_bytes())
-            for f in ("api_cache.py", "cache_transport.py")
+            for f in ("api_cache.py", "cache_transport.py", "corrected_user.py", "second_turn_disclosures.json",
+                      "cases.json", "protocol.json", "run.py")
         },
         "rules": RULES,
         "workers": WORKERS,
@@ -314,6 +330,7 @@ def run(folder, key):
     else:
         manifest = dict(fixed, nonce=uuid.uuid4().hex, start_utc=utc())
         write_json(stamp, manifest)
+    persist_plan(folder, "population.json", population)
     collector = Collector(folder, key, manifest["nonce"])
     body = payload(
         BASE,
@@ -327,9 +344,10 @@ def run(folder, key):
         calibration = collector.calibrate()
         write_json(folder / "calibration.json", calibration)
         if not collector.stop.is_set():
+            persist_plan(folder, "allocation.json", plan(calibration))
             with concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS) as pool:
                 for n, _ in enumerate(
-                    pool.map(lambda u: collector.collect(u, calibration), units()), 1
+                    pool.map(lambda u: collector.collect(u, calibration), replay), 1
                 ):
                     if n % 24 == 0 and not collector.stop.is_set():
                         print(f"{n} replay units processed", flush=True)
