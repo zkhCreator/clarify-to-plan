@@ -1,0 +1,15 @@
+{
+  "model": "Qwen/Qwen3-8B-MLX-4bit",
+  "revision": "383413e909f3bc5303ce195ebbdf0339c5a1a2a3",
+  "policy_sha256": "b44c4ea72d0a94442867c64a4bf061b278575d709db81739ff361a89379920f1",
+  "schedule_sha256": "1ba81380b1d4602c176d68be33fb8aaa2feb4f736e20d1c4c30efe8345aceb9b",
+  "cards_sha256": "ed42434a504d6eb20a0ac027f06892b2ccf251cf0af777f9d2a0ebbc8c25caa2",
+  "runner_sha256": "ec7ad163d1e2ba4cc7acf327aef17c511a9c005f0648e2ef3a151a999b2f202c",
+  "runtime": {
+    "mlx": "0.32.4",
+    "mlx-lm": "0.32.2",
+    "mlx-metal": "0.32.4",
+    "transformers": "5.24.0",
+    "tokenizers": "0.23.3"
+  }
+}

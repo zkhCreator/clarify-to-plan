@@ -1,0 +1,56 @@
+{
+  "format": 1,
+  "model": "gpt-6.2-astra",
+  "effort": "medium",
+  "codex": "codex-cli 0.167.0-alpha.4.1",
+  "workers": 4,
+  "arms": {
+    "none": {
+      "git_sha": null,
+      "files": {},
+      "instruction_sha256": "20bac2cba3b354443d0dcef32d97837646740ea6f73bd6091dbd28b7239c4fea"
+    },
+    "release": {
+      "git_sha": "7c0daa87f7d2e97a7c01fcbc6bb319a51ea0fa8b",
+      "files": {
+        "SKILL.md": "2373aaca22b2ce7d638d0ae63aa6c3163848d693a7c3d36d401e4a3330c83cf5"
+      },
+      "instruction_sha256": "5126a509f0e252e991c50aeb73e53049ae02555397b553378f672c033bcaae6a"
+    },
+    "main": {
+      "git_sha": "d7ad4056a7b1b2404ea0647f0170385b33457a22",
+      "files": {
+        "SKILL.md": "bc454baa92de6299603d9fda58d78093d782665e3bd3235de5ac44493aac43db",
+        "references/check-in-example.md": "5128bf9c5e238139d37a906d906a43936ddde26254c8c7218c78bc1a39662399"
+      },
+      "instruction_sha256": "7f264e2c9ba9717cf70b069ddd5ff348c04bb48e094801ab0cf1a7b8398ba9fb"
+    }
+  },
+  "source_sha256": {
+    "cases.json": "8e93f80c4560ae37c3e9d514167d6f756a489d6c6b0be6d51b3dedfe3122f5ed",
+    "anchors.json": "518c8be79ed3b6f4b6aca4c2d1bb6cfd58c5317ee9c135d6989e87186712a1ce",
+    "protocol.json": "8fd570ee8f197e054979b2b3bc15a4481c37376d9dda9f3dbcc97a4165e156e0",
+    "run.py": "40aba470d4e49e0c78bda095fa296ee70cab0835dc3ff1535b508f46daede972",
+    "codex_client.py": "75fcf2a6cb79b504d79def2dc9eb63a7443a80b0552312c3f167fb006afa54a5"
+  },
+  "scheduled": 216,
+  "cache_mode": "uncontrolled_codex",
+  "api_cost_usd": null,
+  "isolation": "ephemeral thread, no environments, no tools used; all discovered skills disabled and checked",
+  "grading": {
+    "items_digest": "e3b4eeff65e2bba186b1ed58920d575d9c9ee0952dec1cc68f8e3ceeb637d1a1",
+    "grader_digest": "5b67b5717cd8c57b60e8e49ac6cecbc88f2be635c0918f5362ff3a6623fd9e37",
+    "model": "gpt-6.2-astra",
+    "effort": "medium"
+  },
+  "protocol_sha256": "8fd570ee8f197e054979b2b3bc15a4481c37376d9dda9f3dbcc97a4165e156e0",
+  "reporter_sha256": "bd97214a9390ed02eb39dcf4505882880cd86b7a4b23ce06cf4aab941da5726c",
+  "first_utc": "2026-11-22T01:38:55.341820+00:00",
+  "artifacts_sha256": {
+    "subjects.jsonl": "e91999f280258f876ae12078d5463b1d955604843a9a6851eab5f523048d86aa",
+    "ratings.jsonl": "2c32b3226bc64d2bdda2cb9edf93c898e0d058da6dc251629f90ed72b4ce7025",
+    "judge-attempts.jsonl": "845be0d2d5eb46c793b516764fa47a613666e651cb7c4b88ce8af2e1f2bde1c8",
+    "review.md": "8917e4d2eaca002ac6966392b863da1c70dca709290dcb280d0a272b6c45830e",
+    "first-turn.json": "379ea7f13ae6fe0654beff4b5dd932c707963e2057bda0161508f7c29b0970e0"
+  }
+}

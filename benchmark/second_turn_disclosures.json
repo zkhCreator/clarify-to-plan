@@ -1,0 +1,253 @@
+{
+  "format": 1,
+  "subjects_sha256": "e91999f280258f876ae12078d5463b1d955604843a9a6851eab5f523048d86aa",
+  "rule": "Review the frozen first answer against the facts in cases.json. Reveal a fact only if it answers a question directed to the current user. Examples, suggested templates, quoted questions and generic mentions grant no facts. A question about who asked or reviews a draft does not ask who controls publication. Asking how last time was announced does not establish the current channel. Unknown first answers require a new semantic decision.",
+  "entries": {
+    "000ee60e8e5ec9b3e59818f7977625dce59cbfc605311527a5472f7d8f8df9b2": {
+      "case": "Q02",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "最常停下来问的是哪句话"
+    },
+    "067e54792047866ad9a741df212c77b3449303d74cafaa65eff5f98e04f775a0": {
+      "case": "Q01",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "哪一类最想先解决"
+    },
+    "087be8846a3521dc4ade31a2371eb5c6918a5ac4351062e475eb3bc80a653f8d": {
+      "case": "Q03",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "最让你头疼的是哪种情况"
+    },
+    "17f649c1f702d804b311ec5d4873ff95184c758f20de2cded20c200a7db471ea": {
+      "case": "Q02",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "大家反复问的是哪句话"
+    },
+    "1bdfb6634f3f2da10e60b36d5a5ab59f27ba4b2ef0df219c3794606ba580b9b1": {
+      "case": "Q01",
+      "slots": [],
+      "evidence": "可以先试一张"
+    },
+    "1e82d6e8fcfb083f3b36497e210dce49f29a75cae6e770c27933c0fd0bf671b6": {
+      "case": "Q01",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "最常回头问哪类事"
+    },
+    "2ba30fd6c983f7bb71454a7ed7174beed565ac05b5271beeb8e2e14924785ac6": {
+      "case": "Q04",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "你通常是为了弄清什么"
+    },
+    "4122294b93c416b75afbf8969fd940cf20bc4f903b324544ec1ed5c5e0a76a24": {
+      "case": "Q03",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "你最想先解决哪种情况"
+    },
+    "5158a8b53619c8c02c5185433e34972ab3035a9a0a0c740e264471b7e9a97361": {
+      "case": "Q01",
+      "slots": [],
+      "evidence": "什么事别重复做"
+    },
+    "5f4a4f5fa42ed46f6bd89e70d86839f686f522aab7c601123931d60ca6af1700": {
+      "case": "Q02",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "最常重复问的那一句是什么"
+    },
+    "611cf7947a94b195f011d96d5ef5554dd8e210753f44755fb72b9c9e2bf13675": {
+      "case": "Q04",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "最想先省掉的是哪一种"
+    },
+    "61b1a78641062189e12b61a26098af9ec14f7e4e9ba74173cff27909b7b3fb9f": {
+      "case": "Q01",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "接班的人后来问了什么"
+    },
+    "640754f2b2eef8321d0c49924958ce0602660abe2d34ca1620d649b87c795668": {
+      "case": "Q04",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "你通常是为了什么事找人"
+    },
+    "64e4a2293b0b05ed1c2818b3aac4c32a42056f45cb2876ecc304147b53148545": {
+      "case": "Q04",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "通常是卡在哪一步"
+    },
+    "6c85d28d805e32e88561183b5e45cff74cf48738d7da167bec80da5a1fd0660f": {
+      "case": "Q03",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "你最想先解决哪一种混乱"
+    },
+    "75308581b1c248c398601f9fe03103d0824d4d06705e04f07ba175da44e271fe": {
+      "case": "Q01",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "哪类问题最想先省掉"
+    },
+    "78118ca8e8a59d344ea760f6a8b63be23c6151a2814c553e77c9e34f0d9921fb": {
+      "case": "Q04",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "最想先省掉的是哪一种来回"
+    },
+    "7b3e8a8739d5a49b5fe41c302ae55ad9f6ff8c7765286027e50879a16bc6affb": {
+      "case": "Q03",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "你最想避免的是哪种情况"
+    },
+    "7ba7b7ef863e695c9b6ae1a9607a128fb43b72312f930881136e33072d15db1e": {
+      "case": "Q01",
+      "slots": [],
+      "evidence": "建议在值班群里固定发一张交接单"
+    },
+    "7ce8025461bc68cf2cccf8b4118d7540678983b1aec4ade882b494ad96a746be": {
+      "case": "Q04",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "主要是为了弄清哪件事"
+    },
+    "7dd15aa1b262bab0e2e1932d6e6fcc7d481fada317406ac5c318e3dfbd327916": {
+      "case": "Q01",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "你们更常遇到哪种情况"
+    },
+    "811767ce2066cbaa082441ef798e0cd5544f62c8f46fddcc8fdb0917ac02043d": {
+      "case": "Q02",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "最常反复确认的是哪件事"
+    },
+    "84fb0d2d447474e2a2edaf611b0d31ec11ac4c6c7a533dcf37ae86df6ebd7b83": {
+      "case": "Q02",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "最常回头确认的是哪件事"
+    },
+    "88a8a357c902029c5818865f207420dc0cf3b0185c3ac8d85cf44ebd6f75556f": {
+      "case": "Q02",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "大家反复问的是哪类问题"
+    },
+    "9924e54743bde711b1238e3f5eafbac5e53bd4328a67a2a387c87238d01d02bd": {
+      "case": "Q02",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "你们现在最常卡在哪一句"
+    },
+    "9b46db7e3ad49dbdbd5264ac6e6881dbda96374b10087901d5cb629678398643": {
+      "case": "Q04",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "当时主要是问了好几个人"
+    },
+    "a4a23ec0521409d51aa3243cc3ea80f0d4701a53ba0be9e475d7ced1314b9fb5": {
+      "case": "Q03",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "哪种情况最让你想先解决"
+    },
+    "a75ef8bdcd9719e47b76d0bac0f90e98d1cd3b36bc47672ff7b449f1e6f3d8e2": {
+      "case": "Q03",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "你最希望先解决哪一种情况"
+    },
+    "a8ad3bb363f824993c323e236523bf08b01b0db5eed7861bb61b5e980aa75db6": {
+      "case": "Q04",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "你最近一次来回找人"
+    },
+    "bef5e7354116934e15c1605e5bbffdacf45ee5c1a28c395eca56f121a59dfc3e": {
+      "case": "Q03",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "最让人困扰的是"
+    },
+    "ca52f3a4c9707e67eb7927536afaacb5fadb04c14efdfd4a3fb393571c4c650a": {
+      "case": "Q03",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "你想先解决哪种"
+    },
+    "cb83f6e3c5efee92709bd651a5b92733b4581d138daac539e0d76052aa444057": {
+      "case": "Q04",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "先确认一个最影响需求的问题"
+    },
+    "cf3cc77a298b476f7521a64807f9717846222be880b50b7c05341d8c8c18e93e": {
+      "case": "Q02",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "最像哪种情况"
+    },
+    "ef3367c7b62d4733c7d80fd4b8aa37daa2ad2e90282b3b52d4d47505c2c4c7a5": {
+      "case": "Q01",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "接班的人当时回头问了什么"
+    },
+    "f019ed018ed850ccf9978b92d2126ea0045e99e3cc1a02e79a4228ba0c5c4fb8": {
+      "case": "Q03",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "当时主要是有人"
+    },
+    "f8870edbcdcf6f6b33667cce7d07bc13fb91cd03a2211d592d1af97688961ccd": {
+      "case": "Q02",
+      "slots": [
+        "goal"
+      ],
+      "evidence": "最近一次交稿，卡在哪一类"
+    }
+  }
+}

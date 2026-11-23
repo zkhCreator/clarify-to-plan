@@ -1,0 +1,44 @@
+{
+  "format": 1,
+  "model": "gpt-6.2-astra",
+  "effort": "medium",
+  "codex": "codex-cli 0.167.0-alpha.4.1",
+  "workers": 4,
+  "arms": {
+    "none": {
+      "git_sha": null,
+      "files": {},
+      "instruction_sha256": "20bac2cba3b354443d0dcef32d97837646740ea6f73bd6091dbd28b7239c4fea"
+    },
+    "release": {
+      "git_sha": "7c0daa87f7d2e97a7c01fcbc6bb319a51ea0fa8b",
+      "files": {
+        "SKILL.md": "2373aaca22b2ce7d638d0ae63aa6c3163848d693a7c3d36d401e4a3330c83cf5"
+      },
+      "instruction_sha256": "5126a509f0e252e991c50aeb73e53049ae02555397b553378f672c033bcaae6a"
+    },
+    "main": {
+      "git_sha": "d7ad4056a7b1b2404ea0647f0170385b33457a22",
+      "files": {
+        "SKILL.md": "bc454baa92de6299603d9fda58d78093d782665e3bd3235de5ac44493aac43db",
+        "references/check-in-example.md": "5128bf9c5e238139d37a906d906a43936ddde26254c8c7218c78bc1a39662399"
+      },
+      "instruction_sha256": "7f264e2c9ba9717cf70b069ddd5ff348c04bb48e094801ab0cf1a7b8398ba9fb"
+    }
+  },
+  "source_sha256": {
+    "cases.json": "8e93f80c4560ae37c3e9d514167d6f756a489d6c6b0be6d51b3dedfe3122f5ed",
+    "anchors.json": "518c8be79ed3b6f4b6aca4c2d1bb6cfd58c5317ee9c135d6989e87186712a1ce",
+    "protocol.json": "8fd570ee8f197e054979b2b3bc15a4481c37376d9dda9f3dbcc97a4165e156e0",
+    "run.py": "40aba470d4e49e0c78bda095fa296ee70cab0835dc3ff1535b508f46daede972",
+    "codex_client.py": "75fcf2a6cb79b504d79def2dc9eb63a7443a80b0552312c3f167fb006afa54a5"
+  },
+  "scheduled": 36,
+  "cache_mode": "uncontrolled_codex",
+  "api_cost_usd": null,
+  "isolation": "ephemeral thread, no environments, no tools used; all discovered skills disabled and checked",
+  "subjects_sha256": "e91999f280258f876ae12078d5463b1d955604843a9a6851eab5f523048d86aa",
+  "disclosures_sha256": "d75c2e69e6361a4bc7e63c0b0af050bb07453a4e5a5fef32d35e113a520cf7a1",
+  "replay_sha256": "d5b01624eb8197c4e5d042718f961c9ac943feb32200d80627545653c92a2d64",
+  "oracle_sha256": "d00837f5923c510387121e3f11872c756bf5bde07696a4d88d7ab1e62110ad8a"
+}

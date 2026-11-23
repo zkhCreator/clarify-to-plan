@@ -1,0 +1,446 @@
+{
+  "subjects": 216,
+  "revised": 36,
+  "reused": 180,
+  "changed_followups": [
+    "Q01-1-none",
+    "Q01-1-release",
+    "Q02-1-main",
+    "Q02-1-none",
+    "Q02-1-release",
+    "Q02-2-main",
+    "Q02-2-release",
+    "Q02-3-none",
+    "Q02-3-release",
+    "Q03-1-none",
+    "Q03-3-none",
+    "Q04-2-main",
+    "Q04-2-none",
+    "Q04-2-release",
+    "Q04-3-none"
+  ],
+  "arms": {
+    "none": {
+      "n": 72,
+      "revised_n": 12,
+      "astra_before": {
+        "passes": 59,
+        "revised": 6,
+        "case_majorities": 19
+      },
+      "astra_after": {
+        "passes": 59,
+        "revised": 6,
+        "case_majorities": 19
+      },
+      "qwen_before": {
+        "passes": 72,
+        "revised": 12,
+        "case_majorities": 24
+      },
+      "qwen_after": {
+        "passes": 72,
+        "revised": 12,
+        "case_majorities": 24
+      }
+    },
+    "release": {
+      "n": 72,
+      "revised_n": 12,
+      "astra_before": {
+        "passes": 71,
+        "revised": 12,
+        "case_majorities": 24
+      },
+      "astra_after": {
+        "passes": 71,
+        "revised": 12,
+        "case_majorities": 24
+      },
+      "qwen_before": {
+        "passes": 72,
+        "revised": 12,
+        "case_majorities": 24
+      },
+      "qwen_after": {
+        "passes": 72,
+        "revised": 12,
+        "case_majorities": 24
+      }
+    },
+    "main": {
+      "n": 72,
+      "revised_n": 12,
+      "astra_before": {
+        "passes": 70,
+        "revised": 12,
+        "case_majorities": 23
+      },
+      "astra_after": {
+        "passes": 70,
+        "revised": 12,
+        "case_majorities": 23
+      },
+      "qwen_before": {
+        "passes": 72,
+        "revised": 12,
+        "case_majorities": 24
+      },
+      "qwen_after": {
+        "passes": 72,
+        "revised": 12,
+        "case_majorities": 24
+      }
+    }
+  },
+  "flips": {
+    "astra": [],
+    "qwen": []
+  },
+  "agreement": {
+    "all": {
+      "astra_AB": {
+        "n": 216,
+        "gain": 2,
+        "loss": 2,
+        "both_pass": 199,
+        "both_fail": 13,
+        "agreement": 212,
+        "kappa": 0.8567164179104481
+      },
+      "astra_qwen": {
+        "n": 216,
+        "gain": 16,
+        "loss": 0,
+        "both_pass": 200,
+        "both_fail": 0,
+        "agreement": 200,
+        "kappa": 0.0
+      }
+    },
+    "revised": {
+      "astra_AB": {
+        "n": 36,
+        "gain": 1,
+        "loss": 0,
+        "both_pass": 30,
+        "both_fail": 5,
+        "agreement": 35,
+        "kappa": 0.8928571428571428
+      },
+      "astra_qwen": {
+        "n": 36,
+        "gain": 6,
+        "loss": 0,
+        "both_pass": 30,
+        "both_fail": 0,
+        "agreement": 30,
+        "kappa": 0.0
+      }
+    },
+    "unchanged_answers": {
+      "astra_AB": {
+        "n": 180,
+        "gain": 1,
+        "loss": 2,
+        "both_pass": 169,
+        "both_fail": 8,
+        "agreement": 177,
+        "kappa": 0.8333333333333329
+      },
+      "astra_qwen": {
+        "n": 180,
+        "gain": 10,
+        "loss": 0,
+        "both_pass": 170,
+        "both_fail": 0,
+        "agreement": 170,
+        "kappa": 0.0
+      }
+    }
+  },
+  "revised_astra_adjudicated": [
+    "Q02-1-none"
+  ],
+  "qwen_reread_keys": [
+    "Q03-1-main",
+    "Q03-2-none",
+    "Q06-2-none",
+    "Q07-2-none",
+    "Q12-1-release",
+    "Q12-2-main",
+    "Q13-1-none",
+    "Q13-3-none",
+    "Q17-3-none",
+    "Q19-1-release",
+    "Q23-1-main",
+    "Q24-3-main"
+  ],
+  "qwen_revised_reread_keys": [
+    "Q03-1-main",
+    "Q03-2-none"
+  ],
+  "qwen_reread": {
+    "n": 12,
+    "gain": 0,
+    "loss": 0,
+    "both_pass": 12,
+    "both_fail": 0,
+    "agreement": 12,
+    "kappa": null
+  },
+  "qwen_anchors": {
+    "n": 4,
+    "gain": 1,
+    "loss": 0,
+    "both_pass": 2,
+    "both_fail": 1,
+    "agreement": 3,
+    "kappa": 0.5
+  },
+  "version_pairs": {
+    "astra": {
+      "none→release": {
+        "old": {
+          "runs": {
+            "n": 72,
+            "gain": 12,
+            "loss": 0,
+            "both_pass": 59,
+            "both_fail": 1
+          },
+          "case_majorities": {
+            "n": 24,
+            "gain": 5,
+            "loss": 0,
+            "both_pass": 19,
+            "both_fail": 0
+          }
+        },
+        "new": {
+          "runs": {
+            "n": 72,
+            "gain": 12,
+            "loss": 0,
+            "both_pass": 59,
+            "both_fail": 1
+          },
+          "case_majorities": {
+            "n": 24,
+            "gain": 5,
+            "loss": 0,
+            "both_pass": 19,
+            "both_fail": 0
+          }
+        }
+      },
+      "none→main": {
+        "old": {
+          "runs": {
+            "n": 72,
+            "gain": 12,
+            "loss": 1,
+            "both_pass": 58,
+            "both_fail": 1
+          },
+          "case_majorities": {
+            "n": 24,
+            "gain": 4,
+            "loss": 0,
+            "both_pass": 19,
+            "both_fail": 1
+          }
+        },
+        "new": {
+          "runs": {
+            "n": 72,
+            "gain": 12,
+            "loss": 1,
+            "both_pass": 58,
+            "both_fail": 1
+          },
+          "case_majorities": {
+            "n": 24,
+            "gain": 4,
+            "loss": 0,
+            "both_pass": 19,
+            "both_fail": 1
+          }
+        }
+      },
+      "release→main": {
+        "old": {
+          "runs": {
+            "n": 72,
+            "gain": 1,
+            "loss": 2,
+            "both_pass": 69,
+            "both_fail": 0
+          },
+          "case_majorities": {
+            "n": 24,
+            "gain": 0,
+            "loss": 1,
+            "both_pass": 23,
+            "both_fail": 0
+          }
+        },
+        "new": {
+          "runs": {
+            "n": 72,
+            "gain": 1,
+            "loss": 2,
+            "both_pass": 69,
+            "both_fail": 0
+          },
+          "case_majorities": {
+            "n": 24,
+            "gain": 0,
+            "loss": 1,
+            "both_pass": 23,
+            "both_fail": 0
+          }
+        }
+      }
+    },
+    "qwen": {
+      "none→release": {
+        "old": {
+          "runs": {
+            "n": 72,
+            "gain": 0,
+            "loss": 0,
+            "both_pass": 72,
+            "both_fail": 0
+          },
+          "case_majorities": {
+            "n": 24,
+            "gain": 0,
+            "loss": 0,
+            "both_pass": 24,
+            "both_fail": 0
+          }
+        },
+        "new": {
+          "runs": {
+            "n": 72,
+            "gain": 0,
+            "loss": 0,
+            "both_pass": 72,
+            "both_fail": 0
+          },
+          "case_majorities": {
+            "n": 24,
+            "gain": 0,
+            "loss": 0,
+            "both_pass": 24,
+            "both_fail": 0
+          }
+        }
+      },
+      "none→main": {
+        "old": {
+          "runs": {
+            "n": 72,
+            "gain": 0,
+            "loss": 0,
+            "both_pass": 72,
+            "both_fail": 0
+          },
+          "case_majorities": {
+            "n": 24,
+            "gain": 0,
+            "loss": 0,
+            "both_pass": 24,
+            "both_fail": 0
+          }
+        },
+        "new": {
+          "runs": {
+            "n": 72,
+            "gain": 0,
+            "loss": 0,
+            "both_pass": 72,
+            "both_fail": 0
+          },
+          "case_majorities": {
+            "n": 24,
+            "gain": 0,
+            "loss": 0,
+            "both_pass": 24,
+            "both_fail": 0
+          }
+        }
+      },
+      "release→main": {
+        "old": {
+          "runs": {
+            "n": 72,
+            "gain": 0,
+            "loss": 0,
+            "both_pass": 72,
+            "both_fail": 0
+          },
+          "case_majorities": {
+            "n": 24,
+            "gain": 0,
+            "loss": 0,
+            "both_pass": 24,
+            "both_fail": 0
+          }
+        },
+        "new": {
+          "runs": {
+            "n": 72,
+            "gain": 0,
+            "loss": 0,
+            "both_pass": 72,
+            "both_fail": 0
+          },
+          "case_majorities": {
+            "n": 24,
+            "gain": 0,
+            "loss": 0,
+            "both_pass": 24,
+            "both_fail": 0
+          }
+        }
+      }
+    }
+  },
+  "cases_with_version_flips": {
+    "astra": {
+      "Q01": {
+        "none": "FFF",
+        "release": "PPP",
+        "main": "PPP"
+      },
+      "Q02": {
+        "none": "FFF",
+        "release": "PPP",
+        "main": "PPP"
+      },
+      "Q06": {
+        "none": "FFP",
+        "release": "PPP",
+        "main": "PPP"
+      },
+      "Q09": {
+        "none": "FFP",
+        "release": "PPP",
+        "main": "FPF"
+      },
+      "Q17": {
+        "none": "FPP",
+        "release": "FPP",
+        "main": "PPP"
+      },
+      "Q20": {
+        "none": "FPF",
+        "release": "PPP",
+        "main": "PPP"
+      }
+    },
+    "qwen": {}
+  }
+}

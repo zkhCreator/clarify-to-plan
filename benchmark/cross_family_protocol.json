@@ -1,0 +1,32 @@
+{
+  "model": "Qwen/Qwen3-8B-MLX-4bit",
+  "revision": "383413e909f3bc5303ce195ebbdf0339c5a1a2a3",
+  "format": 1,
+  "seed": 20261123,
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20,
+  "max_new_tokens": 384,
+  "max_attempts": 2,
+  "enable_thinking": false,
+  "original_run": "benchmark-2026-11-22",
+  "source_sha256": {
+    "protocol.json": "8fd570ee8f197e054979b2b3bc15a4481c37376d9dda9f3dbcc97a4165e156e0",
+    "cases.json": "8e93f80c4560ae37c3e9d514167d6f756a489d6c6b0be6d51b3dedfe3122f5ed",
+    "anchors.json": "518c8be79ed3b6f4b6aca4c2d1bb6cfd58c5317ee9c135d6989e87186712a1ce",
+    "results/codex-2026-11-22/subjects.jsonl": "e91999f280258f876ae12078d5463b1d955604843a9a6851eab5f523048d86aa",
+    "results/codex-2026-11-22/ratings.jsonl": "2c32b3226bc64d2bdda2cb9edf93c898e0d058da6dc251629f90ed72b4ce7025"
+  },
+  "assets_sha256": {
+    "config.json": "eb21fe151c8d2b761794129a0f92a8b719a76d97705dda758ed6746c829a7720",
+    "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+    "model.safetensors": "fcc83d7537bee76cc143be3e25f8954b816798f93528103db1cddb02977c5617",
+    "model.safetensors.index.json": "5d1f86d9f3e5edc70a4a99e8d4223f061b138c85066819fc6a128579c7ddb5e8",
+    "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "tokenizer_config.json": "f45a828b27bfe1ae2080246d6de51c29370a0978f15b3299123830d5ba9e08a1",
+    "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+  },
+  "grading": "One new primary vote for every original transcript, 12 hidden repeat readings and four frozen calibration anchors. One transcript per model context. Require all three frozen criteria. Repeat only for a technical output failure. No semantic retry or tuning on results.",
+  "comparison": "Pair by the same original transcript. Compare the new primary vote to Astra A, B and its final binary verdict. Show all per-case flips and both directions. Anchors and repeats are excluded from task rates.",
+  "human_sample": "Include every original transcript showing any item-level or binary disagreement across Astra A/B/available C and Qwen primary/available repeat. Then sample 24 unanimous transcripts without replacement, targeting eight per arm and two unanimously failing where available. Mix the whole set under fresh private random blind IDs."
+}
