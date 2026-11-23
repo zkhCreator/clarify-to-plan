@@ -29,14 +29,18 @@ def fixture(root: Path):
         }
     ]
     subjects = []
-    for rep in range(1, 73):
+    families = ("clarify", "continuity", "equivalence", "evidence", "handoff", "trial")
+    cases = [dict(cases[0], id=f"Q{i:02}", family=family) for i, family in enumerate(families, 1)]
+    for i in range(72):
+        case = cases[i // 12]
+        rep = i % 12 + 1
         for arm in hr.ARM_ORDER:
-            key = f"Q01-{rep}-{arm}"
+            key = f"{case['id']}-{rep}-{arm}"
             subjects.append(
                 {
                     "id": key,
-                    "case": "Q01",
-                    "family": "clarify",
+                    "case": case["id"],
+                    "family": case["family"],
                     "rep": rep,
                     "arm": arm,
                     "attempts": [
@@ -53,7 +57,6 @@ def fixture(root: Path):
                     ],
                 }
             )
-    subject_keys = {row["id"] for row in subjects}
     history = []
     for rater in ("A", "B"):
         for row in subjects:
@@ -75,6 +78,14 @@ def fixture(root: Path):
         "anchor-false_pass",
         "anchor-false_reject",
     }
+    roster = hr.repeat_sample({r["id"]: r for r in subjects})
+    by_identity = {(r["rater"], r["key"]):r for r in history}
+    for rater in ("A","B"):
+        for key in roster:
+            history.append(dict(by_identity[rater,key], kind="repeat", blind_id=f"repeat-{key}-{rater}"))
+        for key in anchors:
+            history.append({"kind":"anchor","rater":rater,"key":key,"vote":{"checks":[True]*3,"pass":True}})
+    history.append(dict(by_identity["B", "Q01-1-none"], rater="C", blind_id="C-adjudication"))
     new = []
     for index, row in enumerate(subjects):
         new.append(
@@ -86,7 +97,7 @@ def fixture(root: Path):
                 "blind_id": f"new-primary-{index}",
             }
         )
-    for index, key in enumerate(sorted(subject_keys)[:12]):
+    for index, key in enumerate(hr.repeat_sample({r["id"]: r for r in subjects})):
         new.append(
             {
                 "kind": "repeat",

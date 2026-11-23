@@ -28,6 +28,9 @@ from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
+from cross_family_report import validate_historical_ratings
+from grade import repeat_sample, success
+
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parent
 SUBJECTS_PATH = HERE / "results/codex-2026-11-22/subjects.jsonl"
@@ -245,6 +248,7 @@ def load_new_votes_strict(
     path: Path,
     subject_keys: set[str],
     anchor_keys: set[str],
+    expected_repeats: set[str],
 ) -> list[dict[str, Any]]:
     """Validate the complete new-family vote file before any selection occurs."""
 
@@ -325,8 +329,8 @@ def load_new_votes_strict(
     duplicates = sorted(key for key, count in primary.items() if count != 1)
     if duplicates:
         raise ValueError(f"new primary has duplicate subjects: {duplicates[:3]}")
-    if len(repeats) != 12:
-        raise ValueError("new votes must contain exactly twelve distinct repeat reads")
+    if len(repeats) != 12 or repeats != expected_repeats:
+        raise ValueError("new votes must match the twelve preregistered repeat subjects")
     if len(anchors) != len(anchor_keys) or anchors != anchor_keys:
         raise ValueError("new votes must contain exactly the frozen anchor reads")
     return result
@@ -973,15 +977,54 @@ def build_public_files(
     )
 
 
+def review_inputs(votes_path, quality_folder=None):
+    subjects = load_subjects(SUBJECTS_PATH, CASES_PATH)
+    subject_keys = set(subjects)
+    original = {r["id"]: r for r in read_jsonl(SUBJECTS_PATH)}
+    roster = set(repeat_sample(original))
+    anchors = load_anchor_keys(ANCHORS_PATH)
+    validate_historical_ratings(read_jsonl(RATINGS_PATH), subject_keys, roster, anchors)
+    historical = load_historical_votes(RATINGS_PATH, subject_keys)
+    votes = load_new_votes_strict(votes_path, subject_keys, anchors, roster)
+    source = private_source_digests(votes_path)
+    if quality_folder is None:
+        return subjects, historical, votes, source
+
+    from corrected_report import CROSS, verify
+
+    verify(quality_folder)
+    if sha256_file(votes_path) != sha256_file(CROSS / "votes.jsonl"):
+        raise ValueError("Correction needs the original Qwen ledger used by the verified report")
+    revised = read_jsonl(quality_folder / "second-turns.jsonl")
+    revised_keys = {row["id"] for row in revised}
+    for row in revised:
+        turn = success(row)["turns"][0]
+        subjects[row["id"]]["dialogue"][1] = {k: turn[k] for k in ("user", "answer")}
+    # Primary and repeat readings from an older transcript cannot score its replacement.
+    historical = [r for r in historical if r["key"] not in revised_keys]
+    for packet in read_jsonl(quality_folder / "astra-packets.jsonl"):
+        readings = success(packet)["votes"]
+        for entry in packet["readings"]:
+            historical.append({**entry, **readings[entry["blind_id"]], "rater":packet["rater"]})
+    new = read_jsonl(quality_folder / "qwen-votes.jsonl")
+    replacements = {(r["key"],r["kind"]) for r in new}
+    votes = [r for r in votes if (r["key"], r["kind"]) not in replacements]
+    votes.extend(dict(r, rater="new_family") for r in new)
+    source["quality_revision"] = sha256_bytes(canonical_json({
+        name: sha256_file(quality_folder / name)
+        for name in ("second-turns.jsonl", "astra-packets.jsonl", "qwen-votes.jsonl")
+    }))
+    return subjects, historical, votes, source
+
+
 def _load_or_create_plan(
-    votes_path: Path,
     private: Path,
     subjects: Mapping[str, dict[str, Any]],
+    historical, new_votes, source,
     *,
     rebuild: bool,
 ) -> tuple[dict[str, Any], bool]:
     plan_path = private / PRIVATE_PLAN
-    source = private_source_digests(votes_path)
     if plan_path.exists():
         if not rebuild:
             raise ValueError(
@@ -996,9 +1039,6 @@ def _load_or_create_plan(
     if any(private.iterdir()):
         raise ValueError("PRIVATE_DIR must be empty for a new packet")
     seed_hex = secrets.token_hex(32)
-    subject_keys = set(subjects)
-    historical = load_historical_votes(RATINGS_PATH, subject_keys)
-    new_votes = load_new_votes_strict(votes_path, subject_keys, load_anchor_keys())
     primary, repeats = vote_indexes(historical, new_votes, subjects)
     reasons_by_key = {key: selection_reasons(key, primary, repeats) for key in subjects}
     selected_keys = {key for key, reasons in reasons_by_key.items() if reasons}
@@ -1035,16 +1075,14 @@ def _load_or_create_plan(
 
 
 def build(
-    votes_path: Path, pack_dir: Path, private_dir: Path, *, rebuild: bool = False
+    votes_path: Path, pack_dir: Path, private_dir: Path, *, rebuild: bool = False,
+    quality_folder: Path | None = None
 ) -> dict[str, Any]:
     pack, private = assert_disjoint(pack_dir, private_dir)
     ensure_empty_pack(pack)
     private.mkdir(mode=0o700, parents=True, exist_ok=True)
-    # Pass the frozen paths explicitly; default arguments capture the module's
-    # original paths and would make a controlled rebuild silently read a
-    # different source set.
-    subjects = load_subjects(SUBJECTS_PATH, CASES_PATH)
-    plan, is_new = _load_or_create_plan(votes_path, private, subjects, rebuild=rebuild)
+    subjects, historical, new_votes, source = review_inputs(votes_path, quality_folder)
+    plan, is_new = _load_or_create_plan(private, subjects, historical, new_votes, source, rebuild=rebuild)
     cards = []
     for entry in plan.get("selected", []):
         key = entry.get("key")
@@ -1153,6 +1191,7 @@ def _generate_parser() -> argparse.ArgumentParser:
     parser.add_argument("votes_jsonl", type=Path)
     parser.add_argument("pack_dir", type=Path)
     parser.add_argument("private_dir", type=Path)
+    parser.add_argument("--quality-report", type=Path, help="use the verified corrected second turns and votes")
     parser.add_argument(
         "--rebuild",
         action="store_true",
@@ -1184,6 +1223,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 parsed.pack_dir,
                 parsed.private_dir,
                 rebuild=parsed.rebuild,
+                quality_folder=parsed.quality_report,
             )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)

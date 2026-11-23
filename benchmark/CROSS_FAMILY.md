@@ -28,6 +28,12 @@ python3 benchmark/human_review.py benchmark/results/cross-family-2026-11-22/vote
 python3 benchmark/human_review.py reconcile /path/to/human-review-answers.json ../review-mapping
 ~~~
 
+修订第二轮后制作新一轮人工盲审包，可增加以下参数。它从已校验的报告读取 36 份新对话和新评分，移除针对旧答案的重读，并保留其余 180 份。使用新的输出目录和私下保管的对照表。过往人工评分只适用于当时的原答卷。 修订版盲包共 41 份，包括 17 份有分项分歧的答卷及 24 份同判抽样，三个版本各抽 8 份同判答卷。尚待人工填回。
+
+~~~sh
+python3 benchmark/human_review.py benchmark/results/cross-family-2026-11-22/votes.jsonl ../corrected-reviewer-copy ../corrected-review-mapping --quality-report benchmark/results/corrected-2026-11-22
+~~~
+
 ## 复算与重跑
 
 从完整克隆的仓库根目录运行。前两条命令只使用 Python 标准库，复核映射、用量记录中的输入指纹及报告统计。最后一条命令用于在具备 Apple Silicon、MLX 和本地模型权重的环境中重新推理。实测依赖版本见运行清单。[环境清单](results/cross-family-2026-11-22/run.json)
