@@ -1,0 +1,11 @@
+{
+  "source": "https://developers.openai.com/api/docs/pricing",
+  "model_reference": "https://developers.openai.com/api/docs/models/gpt-6.2-astra",
+  "observed_on": "2026-11-22",
+  "model": "gpt-6.2-astra",
+  "service_tier": "default",
+  "context": "Standard, short",
+  "max_input_tokens": 272000,
+  "unit": "USD per 1000000 tokens",
+  "rates": {"ordinary": 8, "read": 0.4, "write_30m": 10, "write_12h": 20, "output": 40}
+}
